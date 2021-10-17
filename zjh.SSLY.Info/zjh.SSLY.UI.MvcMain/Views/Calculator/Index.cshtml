@@ -1,0 +1,45 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                Execute();
+            }
+        }
+    });
+
+
+    function Execute() {
+        var txtShipping = $("#txtShipping").textbox("getValue");
+        var txtCountry = $("#txtCountry").textbox("getValue");
+        var txtWeight = $("#txtWeight").textbox("getValue");
+        $('#ttCalculator').datagrid({
+            singleSelect: true,
+            remoteSort: false,
+            fit: true,
+            fitColumns: true,
+            nowrap: false,
+            url: '/BillPurchase/LoadView',
+            queryParams: { "status": "50", "rows": "30", "page": "1" },//status, int rows, int page
+            columns: [[ 
+             { title: '货运方式', field: 'Formno', align: 'center', width: 80 },
+             { title: '收费明细', field: 'Freight', align: 'center', width: 80 },
+             { title: '运费（元）', field: 'Freights', align: 'center', width: 80 }
+            ]] 
+        });
+    }
+
+</script>
+
+<div style="margin:auto;width:600px;padding-top:50px;">
+    货运：<input class="easyui-textbox" id="txtShipping" style="width:100px;">
+    国家：<input class="easyui-textbox" id="txtCountry" style="width:100px;">
+    重量：<input class="easyui-textbox" id="txtWeight" style="width:100px;">g
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="Execute()">运算</a>
+    <table id="ttCalculator"></table>
+</div>

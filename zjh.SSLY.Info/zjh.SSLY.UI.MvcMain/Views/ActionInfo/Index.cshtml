@@ -1,0 +1,339 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        initDataGrid();
+    });
+    var isFist = false;
+    var rowID = 0;
+    function initDataGrid(params) {
+        $('#tt').datagrid({
+            url: '/ActionInfo/LoadView',
+            striped: true,
+            remoteSort: false,
+            width: 1000,
+            height: 600,
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            nowrap: false,
+            pageList: [30, 50, 100],
+            singleSelect: true,
+            rownumbers: true,
+            queryParams: params,
+            columns: [[
+                    { field: 'ck', checkbox: true, align: 'center', hidden: true, width: 50 },
+                    { field: 'ID', title: '编号', align: 'center', hidden: true, width: 50 },
+                    { field: 'ActionName', title: '权限', align: 'center', width: 50 },
+                    { field: 'ActionCode', title: '权限代号', align: 'center', width: 50 },
+                    {
+                        field: 'ag', title: '权限组', align: 'center', width: 50,
+                        formatter: function (value, row, index) { 
+                            return row.ActionGroup.GroupName;
+                        }
+                    },
+                    { field: 'Remark', title: '描述', align: 'center', width: 50 }
+            ]],
+            toolbar: [{
+                id: 'btnDownShelf',
+                text: '添加',
+                iconCls: 'icon-add',
+                handler: function () {
+                    $("#divActionInfo").css("display", "block");
+                    $("#divActionInfo").dialog({
+                        width: 400,
+                        height: 300,
+                        title: "权限添加",
+                        modal: true,
+                        buttons: [{
+                            text: 'Ok',
+                            iconCls: 'icon-ok',
+                            handler: function () {
+                                $('#ff').form('submit', {
+                                    url: "/ActionInfo/Save",
+                                    success: function (data) {
+                                        alert(data);
+                                    }
+                                });
+                            }
+                        }, {
+                            text: 'Cancel',
+                            handler: function () {
+                            }
+                        }]
+                    });
+                }
+            }, {
+                id: 'btnUpdate',
+                text: '修改产品',
+                iconCls: 'icon-edit',
+                handler: function () {
+                    $("#divActionInfoEdit").css("display", "block");
+                    var rows = $('#tt').datagrid('getSelections');
+                    if (rows.length == 0) {
+                        alert("请选择要编辑的产品");
+                        return;
+                    }
+                    if (rows.length > 1) {
+                        alert("只能对一个产品编辑");
+                        return;
+                    }
+                    $("#divActionInfoEdit").window({
+                        width: 900,
+                        height: 500,
+                        fit: false,
+                        closed: false,
+                        cache: false,
+                        modal: true,
+                        title: "产品编辑"
+                    });
+                    $("#ifrExit").attr("src", "ActionInfo/Edit?id=" + rows[0].ID);
+                    $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                }
+            }, {
+                id: 'btnDelete',
+                text: '删除',
+                iconCls: 'icon-image_Delete',
+                handler: function () {
+                    var rows = $('#tt').datagrid('getSelections');
+                    var ids = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        ids += rows[i].ID + ",";
+                    }
+                    $.messager.confirm("消息", "是否需要删除这条记录！", function (b) {
+                        if (b) {
+                            $.get("/ActionInfo/Delete", "ids=" + ids, function (data) {
+                                if (data == "Ok") {
+                                    $.messager.alert("消息", "删除完成！");
+                                    initDataGrid({});
+                                } else {
+                                    $.messager.alert("消息", "删除失败！");
+                                }
+                            });
+                        }
+                    });
+                }
+            }],
+            //onClickRow: function (rowIndex, rowData) {
+            //    $("#ZImage").attr("src", rowData.ZImage);
+            //    var p = { sku: rowData.SKU };
+            //    LoadDetails(p);
+            //},
+            onHeaderContextMenu: function (e, field) {
+            }
+        });
+    }
+    function Search() {
+        var sTime = $("#starkTime").datetimebox("getValue");
+        var eTime = $("#endTime").datetimebox("getValue");
+        var cc = $('#cc').combobox('getValue');
+        var txtField = $("#txtField").textbox("getValue");
+        var p = { "starkTime": sTime, "endTime": eTime, "Field": cc, "value": txtField };
+        initDataGrid(p);
+    }
+
+    function aterUpdateEdit() {
+        var displayE = $('#divActionInfoEdit').css("display");
+        var displayA = $('#divActionInfoAdd').css("display");
+        if (displayE != "none") {
+            $('#divActionInfoEdit').dialog("close");
+        }
+        if (displayA != "none") {
+            $('#divActionInfoAdd').dialog("close");
+        }
+        initDataGrid();
+    }
+
+
+    function ShowGroup() {
+        $("#divActionGroupWin").dialog({
+            width: 350,
+            height: 450,
+            title: "权限添加",
+            modal: true,
+            buttons: [{
+                text: 'Ok',
+                iconCls: 'icon-ok',
+                handler: function () {
+                    //$('#ff').form('submit', {
+                    //    url: "/ActionInfo/Save",
+                    //    success: function (data) {
+                    //        alert(data)
+                    //    }
+                    //});
+                }
+            }, {
+                text: 'Cancel',
+                handler: function () {
+                }
+            }]
+        });
+        ActionGroupGrid({});
+    }
+    //$(e.data.target).textbox('setValue', 'Something added!');
+    function ActionGroupGrid(params) {
+        $("#divActionGroupWin").css("display", "block");
+        $('#divActionGroupWin').dialog('open');
+        $("#divActionGroupWin").panel("move", { top: $(document).scrollTop() + ($(window).height() - 400) * 0.5 });
+
+        $('#ttActionGroup').datagrid({
+            url: '/ActionGroup/LoadView',
+            striped: true,
+            remoteSort: false,
+            fit: true,
+            height: 300,
+            fitColumns: true,
+            nowrap: false,
+            singleSelect: true,
+            rownumbers: true,
+            queryParams: params,
+            columns: [[
+                    { field: 'GroupName', title: '组名', align: 'center', width: 50 },
+                    { field: 'ID', title: 'ID', align: 'center', width: 50, hidden: true }
+            ]],
+            toolbar: [{
+                id: 'btnDownShelf',
+                text: '添加',
+                iconCls: 'icon-add',
+                handler: function () {
+                    $("#GID").val("0");
+                    $("#divActionGroup").css("display", "block");
+                    $("#divActionGroup").dialog({
+                        width: 290,
+                        height: 150,
+                        title: "添加组",
+                        modal: true,
+                        buttons: [{
+                            text: 'Ok',
+                            iconCls: 'icon-ok',
+                            handler: function () {
+                                //$('#ff').form('submit', {
+                                //    url: "/ActionGroup/Save",
+                                //    success: function (data) {
+                                //        alert(data)
+                                //    }
+                                //});
+                            }
+                        }, {
+                            text: 'Cancel',
+                            handler: function () {
+                            }
+                        }]
+                    });
+                }
+            }, {
+                id: 'btnUpdate',
+                text: '修改产品',
+                iconCls: 'icon-edit',
+                handler: function () {
+                    $("#divActionGroup").css("display", "block");
+                    var rows = $('#ttActionGroup').datagrid('getSelections');
+                    if (rows.length == 0) {
+                        alert("请选择要编辑的产品");
+                        return;
+                    }
+                    if (rows.length > 1) {
+                        alert("只能对一个产品编辑");
+                        return;
+                    }
+                    $("#divActionGroup").window({
+                        width: 900,
+                        height: 500,
+                        fit: false,
+                        closed: false,
+                        cache: false,
+                        modal: true,
+                        title: "产品编辑"
+                    });
+                    $("#ifrExit").attr("src", "ActionGroup/Edit?id=" + rows[0].ID);
+                    $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                }
+            }, {
+                id: 'btnDelete',
+                text: '删除',
+                iconCls: 'icon-image_Delete',
+                handler: function () {
+                    var rows = $('#ttActionGroup').datagrid('getSelections');
+                    var ids = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        ids += rows[i].ID + ",";
+                    }
+                    $.messager.confirm("消息", "是否需要删除这条记录！", function (b) {
+                        if (b) {
+                            $.get("/ActionGroup/Delete", "ids=" + ids, function (data) {
+                                if (data == "Ok") {
+                                    $.messager.alert("消息", "删除完成！");
+                                    initDataGrid({});
+                                } else {
+                                    $.messager.alert("消息", "删除失败！");
+                                }
+                            });
+                        }
+                    });
+                }
+            }],
+            onClickRow: function (rowIndex, rowData) {
+                $("#txtActionGroupName").textbox("setValue", rowData.GroupName);
+                $("#hiddActionGroup_ID").val(rowData.ID);
+                $("#divActionGroupWin").dialog("close");
+            },
+            onHeaderContextMenu: function (e, field) {
+            }
+        });
+    }
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'north',border:false" style="height: 100%;">
+        <div id="tbs" style="padding: 2px 5px; height: 6%;">
+            创建时间:
+            <input class="easyui-datebox" id="starkTime" style="width: 110px;">
+            To:
+            <input class="easyui-datebox" id="endTime" style="width: 110px">
+            <select id="cc" class="easyui-combobox" name="dept" style="width: 80px;">
+                <option value="SKU">编号</option>
+                <option value="Title">产品名称</option>
+                <option value="SupplierID">供销商</option>
+                <option value="Uid">创建人</option>
+                <option value="Remark">备注</option>
+            </select>
+            <input class="easyui-textbox" style="width: 130px;" id="txtField"><a href="#" style="text-decoration: none;"> 更多</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Search()">查询</a>
+
+        </div>
+        <div style="height: 93%;">
+            <table id="tt"></table>
+        </div>
+    </div>
+</div>
+
+<div id="divActionInfo" style="display: none; ">
+    <form id="ff">
+        <div style="width:280px;margin-right:auto;margin-left:auto;padding:30px;">
+            <table>
+                <tr><td>权限</td><td><input class="easyui-textbox" name="ActionName" style="width:200px"></td></tr>
+                <tr><td>权限代号</td><td><input class="easyui-textbox" name="ActionCode" style="width:200px"></td></tr>
+                <tr>
+                    <td>权限组</td>
+                    <td>
+                        <input id="txtActionGroupName" name="txtActionGroupName" class="easyui-textbox" data-options="icons: [{
+                                                                     iconCls:'icon-ellipsis',
+                                                                     handler: function(e){
+                                                                         ShowGroup();
+                                                                     }
+                                                                 }]" style="width: 200px;">
+                    </td>
+                </tr>
+                <tr><td>类型</td><td><input class="easyui-textbox" name="HttpType" style="width:200px"></td></tr>
+                <tr><td>描述</td><td><input class="easyui-textbox" name="Remark" style="width:200px"></td></tr>
+            </table>
+        </div>
+        <input type="hidden" name="ActionGroup_ID" id="hiddActionGroup_ID" value="" />
+    </form>
+</div>
+
+
+<div id="divActionGroupWin" style="display:none;">
+    <table id="ttActionGroup"></table>
+</div>

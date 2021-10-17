@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TbPrototypeDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="TbProduct">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="100" />
+          <Property Name="binds" Type="nvarchar" MaxLength="1024" />
+          <Property Name="sale_props" Type="nvarchar" MaxLength="1024" />
+          <Property Name="price" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="desc" Type="nvarchar(max)" />
+          <Property Name="pic_url" Type="nvarchar" MaxLength="512" />
+          <Property Name="modified" Type="datetime" />
+          <Property Name="product_prop_imgs" Type="nvarchar" MaxLength="200" />
+          <Property Name="status" Type="int" />
+          <Property Name="level" Type="int" />
+          <Property Name="pic_path" Type="nvarchar" MaxLength="512" />
+          <Property Name="rate_num" Type="int" />
+          <Property Name="sale_num" Type="int" />
+          <Property Name="shop_price" Type="nvarchar" MaxLength="50" />
+          <Property Name="standard_price" Type="nvarchar" MaxLength="50" />
+          <Property Name="vertical_market" Type="int" />
+          <Property Name="customer_props" Type="nvarchar" MaxLength="1024" />
+          <Property Name="property_alias" Type="nvarchar" MaxLength="1024" />
+          <Property Name="product_id" Type="int" />
+          <Property Name="outer_id" Type="nvarchar(max)" />
+          <Property Name="created" Type="datetime" />
+          <Property Name="tsc" Type="nvarchar" MaxLength="1024" />
+          <Property Name="cid" Type="int" />
+          <Property Name="cat_name" Type="nvarchar" MaxLength="100" />
+          <Property Name="props" Type="nvarchar" MaxLength="1024" />
+          <Property Name="props_str" Type="nvarchar" MaxLength="1024" />
+          <Property Name="binds_str" Type="nvarchar" MaxLength="1024" />
+          <Property Name="sale_props_str" Type="nvarchar" MaxLength="1024" />
+          <Property Name="collect_num" Type="int" />
+          <Property Name="product_imgs" Type="nvarchar" MaxLength="512" />
+          <Property Name="product_extra_infos" Type="nvarchar" MaxLength="512" />
+          <Property Name="sell_pt" Type="nvarchar" MaxLength="40" />
+          <Property Name="cspu_feature" Type="nvarchar" MaxLength="512" />
+          <Property Name="template_id" Type="int" />
+          <Property Name="commodity_id" Type="int" />
+          <Property Name="is_suite_effective" Type="bit" />
+          <Property Name="suite_items_str" Type="nvarchar" MaxLength="512" />
+          <Property Name="barcode_str" Type="nvarchar" MaxLength="50" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="UID" Type="int" />
+        </EntityType>
+        <EntityType Name="TbProductExtraInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="product_id" Type="int" />
+          <Property Name="field_key" Type="nvarchar" MaxLength="512" />
+          <Property Name="field_name" Type="nvarchar" MaxLength="512" />
+          <Property Name="field_value" Type="nvarchar" MaxLength="512" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="UID" Type="int" />
+        </EntityType>
+        <EntityType Name="TbProductImg">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="pid" Type="int" />
+          <Property Name="product_id" Type="int" />
+          <Property Name="url" Type="nvarchar" MaxLength="512" />
+          <Property Name="position" Type="int" />
+          <Property Name="created" Type="datetime" />
+          <Property Name="modified" Type="datetime" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="UID" Type="int" />
+        </EntityType>
+        <EntityType Name="TbProductPropImg">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="product_id" Type="int" />
+          <Property Name="props" Type="nvarchar(max)" />
+          <Property Name="url" Type="nvarchar" MaxLength="512" />
+          <Property Name="position" Type="int" />
+          <Property Name="created" Type="datetime" />
+          <Property Name="modified" Type="datetime" />
+          <Property Name="ppid" Type="int" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreateTime" Type="datetime" />
+          <Property Name="UID" Type="int" />
+        </EntityType>
+        <EntityContainer Name="TbPrototypeDbModelStoreContainer">
+          <EntitySet Name="TbProduct" EntityType="Self.TbProduct" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TbProductExtraInfo" EntityType="Self.TbProductExtraInfo" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TbProductImg" EntityType="Self.TbProductImg" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TbProductPropImg" EntityType="Self.TbProductPropImg" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TbPrototypeDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityType Name="TbProduct">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="binds" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="sale_props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="price" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="pic_url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="modified" Type="DateTime" Precision="3" />
+          <Property Name="product_prop_imgs" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="level" Type="Int32" />
+          <Property Name="pic_path" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="rate_num" Type="Int32" />
+          <Property Name="sale_num" Type="Int32" />
+          <Property Name="shop_price" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="standard_price" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="vertical_market" Type="Int32" />
+          <Property Name="customer_props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="property_alias" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="product_id" Type="Int32" />
+          <Property Name="outer_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="created" Type="DateTime" Precision="3" />
+          <Property Name="tsc" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="cid" Type="Int32" />
+          <Property Name="cat_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="props_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="binds_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="sale_props_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="collect_num" Type="Int32" />
+          <Property Name="product_imgs" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="product_extra_infos" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="sell_pt" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="cspu_feature" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="template_id" Type="Int32" />
+          <Property Name="commodity_id" Type="Int32" />
+          <Property Name="is_suite_effective" Type="Boolean" />
+          <Property Name="suite_items_str" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="barcode_str" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="UID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TbProductExtraInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="product_id" Type="Int32" />
+          <Property Name="field_key" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="field_name" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="field_value" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="UID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TbProductImg">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="pid" Type="Int32" />
+          <Property Name="product_id" Type="Int32" />
+          <Property Name="url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="position" Type="Int32" />
+          <Property Name="created" Type="DateTime" Precision="3" />
+          <Property Name="modified" Type="DateTime" Precision="3" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="UID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TbProductPropImg">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="product_id" Type="Int32" />
+          <Property Name="props" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="position" Type="Int32" />
+          <Property Name="created" Type="DateTime" Precision="3" />
+          <Property Name="modified" Type="DateTime" Precision="3" />
+          <Property Name="ppid" Type="Int32" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="UID" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="TbPrototypeDbEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="TbProduct" EntityType="Self.TbProduct" />
+          <EntitySet Name="TbProductExtraInfo" EntityType="Self.TbProductExtraInfo" />
+          <EntitySet Name="TbProductImg" EntityType="Self.TbProductImg" />
+          <EntitySet Name="TbProductPropImg" EntityType="Self.TbProductPropImg" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TbPrototypeDbModelStoreContainer" CdmEntityContainer="TbPrototypeDbEntities1">
+          <EntitySetMapping Name="TbProduct">
+            <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProduct">
+              <MappingFragment StoreEntitySet="TbProduct">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="binds" ColumnName="binds" />
+                <ScalarProperty Name="sale_props" ColumnName="sale_props" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="desc" ColumnName="desc" />
+                <ScalarProperty Name="pic_url" ColumnName="pic_url" />
+                <ScalarProperty Name="modified" ColumnName="modified" />
+                <ScalarProperty Name="product_prop_imgs" ColumnName="product_prop_imgs" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="level" ColumnName="level" />
+                <ScalarProperty Name="pic_path" ColumnName="pic_path" />
+                <ScalarProperty Name="rate_num" ColumnName="rate_num" />
+                <ScalarProperty Name="sale_num" ColumnName="sale_num" />
+                <ScalarProperty Name="shop_price" ColumnName="shop_price" />
+                <ScalarProperty Name="standard_price" ColumnName="standard_price" />
+                <ScalarProperty Name="vertical_market" ColumnName="vertical_market" />
+                <ScalarProperty Name="customer_props" ColumnName="customer_props" />
+                <ScalarProperty Name="property_alias" ColumnName="property_alias" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="outer_id" ColumnName="outer_id" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="tsc" ColumnName="tsc" />
+                <ScalarProperty Name="cid" ColumnName="cid" />
+                <ScalarProperty Name="cat_name" ColumnName="cat_name" />
+                <ScalarProperty Name="props" ColumnName="props" />
+                <ScalarProperty Name="props_str" ColumnName="props_str" />
+                <ScalarProperty Name="binds_str" ColumnName="binds_str" />
+                <ScalarProperty Name="sale_props_str" ColumnName="sale_props_str" />
+                <ScalarProperty Name="collect_num" ColumnName="collect_num" />
+                <ScalarProperty Name="product_imgs" ColumnName="product_imgs" />
+                <ScalarProperty Name="product_extra_infos" ColumnName="product_extra_infos" />
+                <ScalarProperty Name="sell_pt" ColumnName="sell_pt" />
+                <ScalarProperty Name="cspu_feature" ColumnName="cspu_feature" />
+                <ScalarProperty Name="template_id" ColumnName="template_id" />
+                <ScalarProperty Name="commodity_id" ColumnName="commodity_id" />
+                <ScalarProperty Name="is_suite_effective" ColumnName="is_suite_effective" />
+                <ScalarProperty Name="suite_items_str" ColumnName="suite_items_str" />
+                <ScalarProperty Name="barcode_str" ColumnName="barcode_str" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TbProductExtraInfo">
+            <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductExtraInfo">
+              <MappingFragment StoreEntitySet="TbProductExtraInfo">
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="field_key" ColumnName="field_key" />
+                <ScalarProperty Name="field_name" ColumnName="field_name" />
+                <ScalarProperty Name="field_value" ColumnName="field_value" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TbProductImg">
+            <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductImg">
+              <MappingFragment StoreEntitySet="TbProductImg">
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="position" ColumnName="position" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="modified" ColumnName="modified" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TbProductPropImg">
+            <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductPropImg">
+              <MappingFragment StoreEntitySet="TbProductPropImg">
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="props" ColumnName="props" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="position" ColumnName="position" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="modified" ColumnName="modified" />
+                <ScalarProperty Name="ppid" ColumnName="ppid" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams />
+  </Designer>
+</edmx:Edmx>

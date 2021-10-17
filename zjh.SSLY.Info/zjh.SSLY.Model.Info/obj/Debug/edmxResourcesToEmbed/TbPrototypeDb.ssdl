@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TbPrototypeDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="TbProduct">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="100" />
+    <Property Name="binds" Type="nvarchar" MaxLength="1024" />
+    <Property Name="sale_props" Type="nvarchar" MaxLength="1024" />
+    <Property Name="price" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="desc" Type="nvarchar(max)" />
+    <Property Name="pic_url" Type="nvarchar" MaxLength="512" />
+    <Property Name="modified" Type="datetime" />
+    <Property Name="product_prop_imgs" Type="nvarchar" MaxLength="200" />
+    <Property Name="status" Type="int" />
+    <Property Name="level" Type="int" />
+    <Property Name="pic_path" Type="nvarchar" MaxLength="512" />
+    <Property Name="rate_num" Type="int" />
+    <Property Name="sale_num" Type="int" />
+    <Property Name="shop_price" Type="nvarchar" MaxLength="50" />
+    <Property Name="standard_price" Type="nvarchar" MaxLength="50" />
+    <Property Name="vertical_market" Type="int" />
+    <Property Name="customer_props" Type="nvarchar" MaxLength="1024" />
+    <Property Name="property_alias" Type="nvarchar" MaxLength="1024" />
+    <Property Name="product_id" Type="int" />
+    <Property Name="outer_id" Type="nvarchar(max)" />
+    <Property Name="created" Type="datetime" />
+    <Property Name="tsc" Type="nvarchar" MaxLength="1024" />
+    <Property Name="cid" Type="int" />
+    <Property Name="cat_name" Type="nvarchar" MaxLength="100" />
+    <Property Name="props" Type="nvarchar" MaxLength="1024" />
+    <Property Name="props_str" Type="nvarchar" MaxLength="1024" />
+    <Property Name="binds_str" Type="nvarchar" MaxLength="1024" />
+    <Property Name="sale_props_str" Type="nvarchar" MaxLength="1024" />
+    <Property Name="collect_num" Type="int" />
+    <Property Name="product_imgs" Type="nvarchar" MaxLength="512" />
+    <Property Name="product_extra_infos" Type="nvarchar" MaxLength="512" />
+    <Property Name="sell_pt" Type="nvarchar" MaxLength="40" />
+    <Property Name="cspu_feature" Type="nvarchar" MaxLength="512" />
+    <Property Name="template_id" Type="int" />
+    <Property Name="commodity_id" Type="int" />
+    <Property Name="is_suite_effective" Type="bit" />
+    <Property Name="suite_items_str" Type="nvarchar" MaxLength="512" />
+    <Property Name="barcode_str" Type="nvarchar" MaxLength="50" />
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CreateTime" Type="datetime" />
+    <Property Name="UID" Type="int" />
+  </EntityType>
+  <EntityType Name="TbProductExtraInfo">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="product_id" Type="int" />
+    <Property Name="field_key" Type="nvarchar" MaxLength="512" />
+    <Property Name="field_name" Type="nvarchar" MaxLength="512" />
+    <Property Name="field_value" Type="nvarchar" MaxLength="512" />
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CreateTime" Type="datetime" />
+    <Property Name="UID" Type="int" />
+  </EntityType>
+  <EntityType Name="TbProductImg">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="pid" Type="int" />
+    <Property Name="product_id" Type="int" />
+    <Property Name="url" Type="nvarchar" MaxLength="512" />
+    <Property Name="position" Type="int" />
+    <Property Name="created" Type="datetime" />
+    <Property Name="modified" Type="datetime" />
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CreateTime" Type="datetime" />
+    <Property Name="UID" Type="int" />
+  </EntityType>
+  <EntityType Name="TbProductPropImg">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="product_id" Type="int" />
+    <Property Name="props" Type="nvarchar(max)" />
+    <Property Name="url" Type="nvarchar" MaxLength="512" />
+    <Property Name="position" Type="int" />
+    <Property Name="created" Type="datetime" />
+    <Property Name="modified" Type="datetime" />
+    <Property Name="ppid" Type="int" />
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CreateTime" Type="datetime" />
+    <Property Name="UID" Type="int" />
+  </EntityType>
+  <EntityContainer Name="TbPrototypeDbModelStoreContainer">
+    <EntitySet Name="TbProduct" EntityType="Self.TbProduct" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="TbProductExtraInfo" EntityType="Self.TbProductExtraInfo" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="TbProductImg" EntityType="Self.TbProductImg" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="TbProductPropImg" EntityType="Self.TbProductPropImg" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,47 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <title>LogOn</title>
+
+    <script type="text/javascript">
+
+        function show() {
+            alert("结束");
+        }
+
+        function beg() {
+            alert("开始");
+        }
+    </script>
+</head>
+<body>
+
+    <div id="UserLogOnContainer">
+        @using (Ajax.BeginForm("Index", "TEST1", null, new AjaxOptions { UpdateTargetId = "UserLogOnContainer", HttpMethod = "Post", OnSuccess = "show", OnBegin = "beg" }))
+        { 
+            <input type="text" name="name2" value=" " />
+       
+            <input type="text" name="name1" value=" " />
+            <input type="submit" id="logOnBtn" value="登陆" />
+        }
+    </div>
+
+</body>
+</html>
+
+
+
+@*<script src="~/Scripts/jquery-1.6.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
+
+
+

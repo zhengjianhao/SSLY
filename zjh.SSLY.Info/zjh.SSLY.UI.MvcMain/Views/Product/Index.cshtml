@@ -1,0 +1,295 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>产品表</title>
+    <style type="text/css">
+        #Image_Left {
+            width: 540px;
+            float: left;
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 420px;
+            overflow: scroll;
+        }
+
+        #Image_Right {
+            width: 420px;
+            float: left;
+            height: 420px;
+            border-left: 2px dashed #95B8E7;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0px;
+        }
+    </style>
+
+
+    <script type="text/javascript">
+        $(function () {
+            initDataGrid({});
+        });
+        var isFist = false;
+        var rowID = 0;
+        function initDataGrid(params) {
+            //params['page'] = '1';
+            $('#tt').datagrid({
+                url: '/Product/LoadView',
+                //striped: true,
+                //remoteSort: false,
+                fit: true,
+                pagination: true,
+                fitColumns: true,
+                //nowrap: false,
+                pageList: [30, 50, 100],
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: params,
+                columns: [[
+						{ field: 'ck', checkbox: true, align: 'center', width: 50 },
+                        { field: 'ID', checkbox: true, hidden: true, align: 'center', width: 50 },
+                        {
+                            field: 'MainImage', title: '', align: 'left', width: 30,
+                            formatter: function (value, row, index) {
+                                var tt = '<a id="link' + row.ID + '" ><img style="width:50px;" src="' + value + '"/></a>';
+                                return tt;
+                            }
+                        },
+                        { field: 'Title', title: '标题', width: 130, align: 'center' },
+                        { field: 'SKU', title: 'SKU', width: 50, align: 'center' },
+                        { field: 'ManufacturerCode', title: '款式', width: 50, align: 'center' },
+                        {
+                            field: 'GrossWeight', title: '毛/净重g', width: 50, align: 'center',
+                            formatter: function (value, row, index) {
+                                return value + "/" + row.NetWeight;
+                            }
+                        },
+                        {
+                            field: 'Color', title: '属性', width: 80, align: 'center',
+                            formatter: function (value, row, index) {
+                                return "颜色:" + row.Color + "  </br>尺码/规格:" + row.CodeNum;
+                            }
+                        },
+                        {
+                            field: 'SalePrice', title: '盈利', width: 80, align: 'center',
+                            formatter: function (value, row, index) {
+                                var lr = parseFloat(row.SalePrice) - parseFloat(row.Cost) - parseFloat(row.ShippingFee);
+                                var lrStr = "0(0%)";
+                                if (parseFloat(row.SalePrice) != 0) {
+                                    lrStr = lr + "(" + (lr / parseFloat(row.SalePrice) * 100).toFixed(1) + "%)";
+                                }
+                                return "价格:" + row.SalePrice + "  成本:" + row.Cost +
+                                        " 运费:" + row.ShippingFee +
+                                    "</br>利润:" + lrStr;
+                            }
+                        },
+                        {
+                            field: 'CreateTime', title: '创建时间', width: 60, align: 'center', formatter: function (value, row, index) {
+                                return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                            }
+                        }
+                ]],
+                toolbar: [{
+                    id: 'btnDownShelf',
+                    text: '添加产品',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#divProductAdd").css("display", "block");
+                        $("#divProductAdd").window({
+                            width: 1100,
+                            height: 650,
+                            title: "添加产品",
+                            modal: true
+                        });
+                        $("#ifrAdd").attr("src", "/Product/Edit?copy=false&id=0");
+                    }
+                }, {
+                    id: 'btnUpdate',
+                    text: '修改产品',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $("#divProductEdit").css("display", "block");
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (rows.length == 0) {
+                            alert("请选择要编辑的产品");
+                            return;
+                        }
+                        if (rows.length > 1) {
+                            alert("只能对一个产品编辑");
+                            return;
+                        }
+                        $("#divProductEdit").window({
+                            width: 1100,
+                            height: 540,
+                            fit: false,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            title: "产品编辑"
+                        });
+
+                        $("#ifrExit").attr("src", "/Product/Edit?copy=true&id=" + rows[0].ID);
+                        $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                    }
+                }, {
+                    id: 'btnUpdate',
+                    text: '复制',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $("#divProductEdit").css("display", "block");
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (rows.length == 0) {
+                            alert("请选择要编辑的产品");
+                            return;
+                        }
+                        if (rows.length > 1) {
+                            alert("只能对一个产品编辑");
+                            return;
+                        }
+                        $("#divProductEdit").window({
+                            width: 900,
+                            height: 500,
+                            fit: false,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            title: "产品编辑"
+                        });
+                        $("#ifrExit").attr("src", "/Product/Edit?copy=true&id=" + rows[0].ID);
+                        $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                    }
+                }, {
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-image_Delete',
+                    handler: function () {
+                        var rows = $('#tt').datagrid('getSelections');
+                        var ids = "";
+                        for (var i = 0; i < rows.length; i++) {
+                            ids += rows[i].ID + ",";
+                        }
+                        $.messager.confirm("消息", "是否需要删除这条记录！", function (b) {
+                            if (b) {
+                                $.get("/Product/Delete", "ids=" + ids, function (data) {
+                                    if (data == "Ok") {
+                                        $.messager.alert("消息", "删除完成！");
+                                        initDataGrid({});
+                                    } else {
+                                        $.messager.alert("消息", "删除失败！");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }],
+                //onClickRow: function (rowIndex, rowData) {
+                //    $("#ZImage").attr("src", rowData.ZImage);
+                //    var p = { sku: rowData.SKU };
+                //    LoadDetails(p);
+                //},
+                onLoadSuccess: function (data) {
+                    for (var i = 0; i < data.rows.length; i++) {
+                        var element = data.rows[i];
+                        $("#link" + element.ID).tooltip({
+                            //position: 'right',
+                            content: '<img src="' + element.MainImage + '"  style="width:300px;"/>'
+                        });
+                    }
+                }
+            });
+        }
+
+
+        var cbbCategory = '';
+        function Search() {
+            cbbCategory = '';
+            var sTime = $("#starkTime").datetimebox("getValue");
+            var eTime = $("#endTime").datetimebox("getValue");
+            var cc = $('#cc').combobox('getValue');
+            var txtField = $("#txtField").textbox("getValue");
+            var cbbCategoryID = $('#cbbCategoryID').combobox('getValue');
+
+            var cateTree = $('#cbbCategoryID').combotree("tree").tree('getSelected');
+            parsingTree(cateTree);
+
+            var p = { "page":'1', "starkTime": sTime, "endTime": eTime, "CategoryID": cbbCategory, "Field": cc, "value": txtField };
+            initDataGrid(p);
+
+        }
+
+        function parsingTree(trees) {
+            var tt = $(trees);
+            for (var i = 0; i < tt.length; i++) {
+                cbbCategory += tt[i].id + ',';
+                if ($(tt[i]).children.length != 0) {
+                    parsingTree(tt[i].children);
+                }
+            }
+        }
+
+        function aterUpdateEdit() {
+            var displayE = $('#divProductEdit').css("display");
+            var displayA = $('#divProductAdd').css("display");
+            if (displayE != "none") {
+                $('#divProductEdit').dialog("close");
+            }
+            if (displayA != "none") {
+                $('#divProductAdd').dialog("close");
+            }
+            initDataGrid();
+        }
+
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',border:false" style="height: 100%;">
+            <div id="tbs" style="padding: 2px 5px; height: 6%;">
+                创建时间:
+                <input class="easyui-datebox" id="starkTime" style="width: 110px;">
+                To:
+                <input class="easyui-datebox" id="endTime" style="width: 110px">
+                <input class="easyui-combotree" id="cbbCategoryID" name="CategoryID" style="width: 180px;" data-options="url:'/ProductCategory/LoadTree?combo=combo',method:'get',required:true">
+                <select id="cc" class="easyui-combobox" name="dept" style="width: 80px;">
+                    <option value="SKU">编号</option>
+                    <option value="Title">产品名称</option>
+                    <option value="SupplierID">供销商</option>
+                    <option value="Uid">创建人</option>
+                    <option value="Remark">备注</option>
+                </select>
+                <input class="easyui-textbox" style="width: 130px;" id="txtField"><a href="#" style="text-decoration: none;"> 更多</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Search()">查询</a>
+            </div>
+            <div style="height: 93%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+    </div>
+
+    <div id="divProductEdit" style="display: none; border: 0px;">
+        <div id="tst" class="easyui-tabs" data-options="fit:true" style="border: 0px; width: 100%; overflow-y: hidden; margin-bottom: 0px; height: 400px;">
+            <div title="产品信息" style="border: 0px;">
+                <iframe style="height: 99%; width: 99%;" id="ifrExit" frameborder="0"></iframe>
+            </div>
+            <div title="资料" data-options="fit:true" style="border: 0px;">
+                <iframe style="height: 99%; width: 99%;" id="ifrFileEdit" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="divProductAdd" style="display: none; border: 0px;">
+        <div id="tst" class="easyui-tabs" data-options="fit:true" style="border: 0px; width: 100%; overflow-y: hidden; margin-bottom: 0px; height: 400px;">
+            <div title="产品参数" style="border: 0px;">
+                <iframe style="height: 99%; width: 99%;" id="ifrAdd" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

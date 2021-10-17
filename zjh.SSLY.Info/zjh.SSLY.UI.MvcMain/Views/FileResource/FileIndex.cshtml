@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>产品图片</title>
+    <link href="~/jquery-easyui-1.4/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <link href="/jquery-easyui-1.4/themes/icon.css" rel="stylesheet" />
+    <script src="/Scripts/jquery-1.8.2.js"></script>
+    <script src="/jquery-easyui-1.4/jquery.easyui.min.js"></script>
+    <script src="/Scripts/datapattern.js"></script>
+    <script src="/jquery-easyui-1.4/locale/easyui-lang-zh_CN.js"></script>
+    <link href="~/uploadify/uploadify.css" rel="stylesheet" />
+    <script src="~/uploadify/jquery.uploadify.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#uploadify").uploadify({
+                'swf': '/uploadify/uploadify.swf',
+                'uploader': '/FileResource/FileUp',
+                'buttonText': '上传图片',
+                'fileTypeDesc': 'Image Files',
+                'fileExt': '*.gif; *.jpg; *.png;*.jepg;',
+                'auto': false,
+                'multi': true,
+                'formData': { "Code": '@ViewData["SKU"]' }
+            });
+        });
+        function AddPic() {
+            var display = $("#uploadID").css("display");
+            if (display == "none") {
+                $("#uploadID").css("display", "block");
+            } else {
+                $("#uploadID").css("display", "none");
+            }
+        }
+        function DelPic(ID) {
+            $.get("/FileResource/Delete", "ID=" + ID, function (data) {
+                location.reload();
+            });
+        }
+        function SetZImage(ID, SKU) {
+            $.get("/FileResource/SetZImage", "ID=" + ID + "&SKU=" + SKU, function (data) {
+                $.messager.alert("提示", "设置成功"); 
+            });
+        }
+    </script>
+</head>
+<body>
+    <form action="/" method="post">
+        <div style="width: 300px; margin: auto;">
+            <a style="text-decoration: none;" href="javascript:void(0)" onclick="AddPic()">添加图片</a>
+        </div>
+        <div id="uploadID" style="width: 300px; margin: auto; display: none;">
+            </br>
+            <div id="fileQueue">
+            </div>
+            <input type="file" style="width: 300px; padding-left: 100px;" name="uploadify" id="uploadify" />
+            <p>
+                <a href="javascript:$('#uploadify').uploadify('upload')">上传</a>|
+                <a href="javascript:$('#uploadify').uploadify('cancel')">取消上传</a>
+            </p>
+        </div>
+        @zjh.SSLY.UI.MvcMain.Controls.ProductPic.PicTable(ViewData["SKU"].ToString())
+    </form>
+</body>
+</html>

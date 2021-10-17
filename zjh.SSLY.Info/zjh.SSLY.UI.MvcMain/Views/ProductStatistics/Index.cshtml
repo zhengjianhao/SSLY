@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "产品统计";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script src="/Content/echarts-2.2.2/doc/example/www/js/echarts.js"></script> 
+<script type="text/javascript">
+
+
+</script>
+<script type="text/javascript">
+    $(function () {
+
+    });
+
+    function TXPic(data) {
+        for (var i = 0; i < data.Gby.length; i++) {
+            if (data.Gby[i].MouthDay == _r) {
+                isCz = true;
+                index = i;
+            }
+        }
+
+    }
+
+    function ShowAll()
+    { 
+        var param = { Date: $("#txtTime").val(), SKU: $("#txtSku").val(), Account: $("#txtAccount").val() };
+        ShowCale(param);
+        ShowTx(param);
+    }
+
+    function ShowCale(param) { 
+        $.get("/ProductStatistics/LoadMouthInfo", param, function (data) {
+            var year = $("#txtTime").val().substr(0, 4);
+            var MM = $("#txtTime").val().substr(5, 2);
+            Calendar(data, year, MM);
+        });
+    }
+    function ShowTx(param) { 
+        var data;
+        $.get("/ProductStatistics/LoadTxPic", param, function (_data) {
+            data = _data;
+        });
+
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: '/Content/echarts-2.2.2/src/'
+            }
+        });
+        // 使用
+
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('main'));
+                var option = {
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['最高', '最低']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: { show: true },
+                            dataZoom: { show: true },
+                            dataView: { show: true },
+                            magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+                            restore: { show: true },
+                            saveAsImage: { show: true }
+                        }
+                    },
+                    calculable: true,
+                    dataZoom: {
+                        show: true,
+                        realtime: true,
+                        start: 20,
+                        end: 80
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: data.days
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '销量',
+                            type: 'line',
+                            data: data.data
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+
+                // 为echarts对象加载数据
+            }
+        );
+
+    }
+    function Calendar(data, year, month) {
+        var str = "";
+        $('#cc').calendar({
+            year: year,
+            month: month,
+            weeks: ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+            months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            formatter: function (date) {
+                var _r = date.getDate();
+                var isCz = false;
+                var index = 0;
+                for (var i = 0; i < data.Gby.length; i++) {
+                    if (data.Gby[i].MouthDay == _r) {
+                        isCz = true;
+                        index = i;
+                    }
+                }
+                if (isCz) {
+                    return _r + "</br>U:" + 0 + "</br>S:" + data.Gby[index].SaleNum;
+                } else {
+                    return _r + "</br>U:" + 0 + "</br>S:0";
+                }
+            },
+            styler: function (date) {
+                if (date.getDay() == 1) {
+                    //return 'background-color:#fff';
+                    // the function can return predefined css class and inline style
+                    // return {class:'r1', style:{'color:#fff'}};
+                } else {
+                    return '';
+                }
+            }, onChange: function (newDate, oleDate) {
+            }
+        });
+    }
+ 
+
+</script>
+
+<table style="margin:auto;">
+    <tr>
+        <td colspan="2">
+            账号<input type="text" name="txtAccount" id="txtAccount" value="卉158876571" />
+            日期<input type="text" name="txtTime" id="txtTime" value="2015-05-01" />
+            SKU:<input type="text" name="txtSku" id="txtSku" value="" />
+            <input type="button" name="name" id="btnSubmit" value="提交" onclick="ShowAll()" />
+        </td>
+    </tr>
+    <tr>
+        <td><div id="cc" style="width: 400px; height: 400px;"></div></td>
+        <td><div id="main" style="margin-left: 0px; width: 1000px; height: 400px;"></div></td>
+    </tr>
+</table>
+
+

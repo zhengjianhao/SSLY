@@ -1,0 +1,289 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>淘宝订单列表</title>
+    <style>
+        .bordered {
+            border: solid #ccc 1px;
+            -moz-border-radius: 6px;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+            -webkit-box-shadow: 0 1px 1px #ccc;
+            -moz-box-shadow: 0 1px 1px #ccc;
+            box-shadow: 0 1px 1px #ccc;
+        }
+
+            .bordered tr:hover {
+                background: #fbf8e9;
+                -o-transition: all 0.1s ease-in-out;
+                -webkit-transition: all 0.1s ease-in-out;
+                -moz-transition: all 0.1s ease-in-out;
+                -ms-transition: all 0.1s ease-in-out;
+                transition: all 0.1s ease-in-out;
+            }
+
+            .bordered td, .bordered th {
+                border-left: 1px solid #ccc;
+                border-top: 1px solid #ccc;
+                padding: 10px;
+                text-align: left;
+            }
+
+            .bordered th {
+                background-color: #dce9f9;
+                background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+                background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+                background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+                background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+                background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+                background-image: linear-gradient(top, #ebf3fc, #dce9f9);
+                -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+                -moz-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+                box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+                border-top: none;
+                text-shadow: 0 1px 0 rgba(255,255,255,.5);
+            }
+
+                .bordered td:first-child, .bordered th:first-child {
+                    border-left: none;
+                }
+
+                .bordered th:first-child {
+                    -moz-border-radius: 6px 0 0 0;
+                    -webkit-border-radius: 6px 0 0 0;
+                    border-radius: 6px 0 0 0;
+                }
+
+                .bordered th:last-child {
+                    -moz-border-radius: 0 6px 0 0;
+                    -webkit-border-radius: 0 6px 0 0;
+                    border-radius: 0 6px 0 0;
+                }
+
+                .bordered th:only-child {
+                    -moz-border-radius: 6px 6px 0 0;
+                    -webkit-border-radius: 6px 6px 0 0;
+                    border-radius: 6px 6px 0 0;
+                }
+
+            .bordered tr:last-child td:first-child {
+                -moz-border-radius: 0 0 0 6px;
+                -webkit-border-radius: 0 0 0 6px;
+                border-radius: 0 0 0 6px;
+            }
+
+            .bordered tr:last-child td:last-child {
+                -moz-border-radius: 0 0 6px 0;
+                -webkit-border-radius: 0 0 6px 0;
+                border-radius: 0 0 6px 0;
+            }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            Load();
+        });
+        function Load() {
+            $('#tt').datagrid({
+                singleSelect: true,
+                remoteSort: false,
+                fitColumns: true,
+                fit: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                nowrap: false,
+                url: '/TbOrders/LoadView',
+                queryParams: { "status": "50", "rows": "30", "page": "1" },//status, int rows, int page
+                columns: [[
+                 { field: 'cks', checkbox: true, align: 'center', width: 50 },
+                 { title: '编号', field: 'Formno', align: 'center', width: 120 },
+                 { title: '订单号', field: 'OrderId', align: 'center', width: 150 },
+                 {
+                     title: '订单状态', field: 'Status', align: 'center', width: 100,
+                     formatter: function (value, row, index) {
+                         switch (value) {
+                             case "TRADE_NO_CREATE_PAY":
+                                 return "没有创建支付宝交易";
+                             case "WAIT_BUYER_PAY":
+                                 return "未付款";
+                             case "TRADE_NO_CREATE_PAY":
+                                 return "未付款";
+                             case "SELLER_CONSIGNED_PART":
+                                 return "部分发货";
+                             case "WAIT_SELLER_SEND_GOODS":
+                                 return "等待发货";
+                             case "WAIT_BUYER_CONFIRM_GOODS":
+                                 return "已发货";
+                             case "TRADE_BUYER_SIGNED":
+                                 return "已签收";
+                             case "TRADE_FINISHED":
+                                 return "交易成功";
+                             case "TRADE_CLOSED":
+                                 return "退款成功";
+                             case "TRADE_CLOSED":
+                                 return "退款成功";
+                             case "TRADE_CLOSED_BY_TAOBAO":
+                                 return "关闭交易";
+                             case "PAY_PENDING":
+                                 return "国际信用卡支付付款确认中";
+                             case "WAIT_PRE_AUTH_CONFIRM":
+                                 return "0元购合约中";
+                             default:
+                         }
+                     }
+                 },
+                 { title: '实收款', field: 'Payment', align: 'center', width: 80 },
+                 { title: '买家旺旺', field: 'BuyerNick', align: 'center', width: 120 },
+                 {
+                     title: '地址', field: 'ck', align: 'center', width: 280,
+                     formatter: function (value, row, index) {
+                         return row.ReceiverState + "  " + row.ReceiverCity + "  " + row.ReceiverDistrict;
+                     }
+                 },
+                 {
+                     title: '付款时间', field: 'PayTime', align: 'center', width: 180,
+                     formatter: function (value, row, index) {
+                         return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                     }
+                 }
+                ]],
+                toolbar: [{
+                    text: '订单添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#dig").css("display", "block");
+                        $('#dig').window({
+                            title: '订单加载',
+                            width: 440,
+                            height: 360,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            footer: '#ft'
+                        });
+                    }
+                }, {
+                    text: '手工添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#dig").css("display", "block");
+                        $('#dig').window({
+                            title: '订单加载',
+                            width: 440,
+                            height: 360,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            footer: '#ft'
+                        });
+                    }
+                }],
+                onClickRow: function (rowIndex, rowData) {
+                    //$("#ZImage").attr("src", rowData.ZImage);
+                    var p = { "formno": rowData.Formno };
+                    LoadDetails(p);
+                },
+                onLoadSuccess: function (data) {
+                    $("#spanPrice").text("未收款：" + data.price);
+                }
+            });
+
+        }
+        function LoadDetails(param) {
+            $('#ttDeltail').datagrid({
+                url: '/TbOrders/LoadDtl',
+                striped: true,
+                remoteSort: false,
+                fit: true,
+                fitColumns: true,
+                nowrap: false,
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: param,
+                columns: [[
+                          { title: 'SKU', field: 'SKU', align: 'center', width: 50 },
+                          { title: '图片', field: 'image', align: 'center', width: 50 },
+                          { title: '数量', field: 'Qty', align: 'center', width: 50 },
+                          { title: '价格', field: 'Price', align: 'center', width: 50 },
+                          { title: '成本', field: 'Cost', align: 'center', width: 50 }
+                ]]
+            });
+        }
+
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',split:true,border:false" style="height: 70%;">
+            <div id="tb" style="padding: 2px 5px; height: 9%;">
+                创建时间:
+                <input class="easyui-datebox" style="width: 110px;">
+                To:
+                <input class="easyui-datebox" style="width: 110px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search">查询</a>
+                 <span id="spanPrice" style="margin-left:20px;color: red;font-size:20px"></span>
+            </div>
+            <div style="height: 89%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+        <div data-options="region:'center',border:false" style="height: 10%;">
+            <div class="easyui-tabs" data-options="fit:true">
+                <div title="商家明细" style="padding-top: 3px;">
+                    <table id="ttDeltail"></table>
+                </div>
+                <div title="买家信息" style="padding-top: 3px;">
+                    <ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dig" style="display: none;">
+        <table style="margin-left: auto; margin-right: auto; padding: 20px;">
+            <tr>
+                <td>选择店铺: 
+                    <select id="cc" class="easyui-combobox" name="dept" style="width: 120px;">
+                        <option value="aa">请选择.....</option>
+                        <option>Baby时尚丽苑</option>
+                        <option>时尚1号店</option>
+                        <option>韩都丽人馆</option>
+                    </select>
+                </td>
+                <td>选择状态: 
+                    <select id="cc" class="easyui-combobox" name="dept" style="width: 120px;">
+                        <option>等待发货</option>
+                        <option>已发货</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">创建时间:
+                    <input class="easyui-datebox" style="width: 120px">To:<input class="easyui-datebox" style="width: 120px">
+                </td>
+            </tr>
+        </table>
+        <div id="ft" style="margin-left: auto; margin-right: auto; padding: 20px; border: 1px solid #746F6F; width: 320px; height: 40%"></div>
+        <div style="margin-left: auto; margin-right: auto; padding: 10px; width: 360px;"><a href="javascript:void(0)" style="float: right; margin-right: 0px;" class="easyui-linkbutton" onclick="LoadOrder" iconcls="icon-search">加载</a></div>
+    </div>
+    <a href="javascript:void(0)" id="mb" iconcls="icon-edit">Edit</a>
+    <div id="mm" style="width: 150px;">
+        <div iconcls="icon-undo">Undo</div>
+        <div iconcls="icon-redo">Redo</div>
+        <div class="menu-sep"></div>
+        <div>Cut</div>
+        <div>Copy</div>
+        <div>Paste</div>
+        <div class="menu-sep"></div>
+        <div iconcls="icon-remove">Delete</div>
+        <div>Select All</div>
+    </div>
+
+
+</body>
+</html>

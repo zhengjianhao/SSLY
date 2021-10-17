@@ -1,0 +1,45 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $('#aa').accordion({
+            animate: true, collapsible: true
+        });
+        $.get("/ProjectMenu/LoadTree", "", function (data) {
+            data = $.parseJSON(data);
+            var fData = $.grep(data, function (item) {
+                if (item.Fid == 0) {
+                    $('#aa').accordion('add', {
+                        title: item.text,
+                        iconCls: item.iconCls,
+                        content: '</br><ul id=tree' + item.id + '></ul> ',
+                        selected: false
+                    });
+                    $('#tree' + item.id).tree({
+                        data: item.children,
+                        onClick: function (node) {
+                            TbTab(node.text, node.Link);  // 在用户点击的时候提示
+                        }
+                    });
+                }
+                return item.Fid == 0;
+            });
+        }); 
+        function TbTab(title, href) {
+            var exists = $('#ttabs').tabs("exists", title);
+            if (!exists) {
+                $('#ttabs').tabs('add', {
+                    title: title,
+                    content: '<iframe style="height:99%;width:99%;" src="' + href + '" scrolling="no" frameborder="0"></iframe>',
+                    closable: true
+                });
+            }
+            $('#ttabs').tabs("select", title);
+            return false;
+        }
+    });
+</script>
+
+<div id="aa" style="width:200px;height:500px;"></div>

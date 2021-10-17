@@ -1,0 +1,11 @@
+﻿@{
+    //ViewBag.Title = "ImportOrder";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<div style="width:400px;margin:auto;">
+    <form action="/TbOrders/ImportOrderByCsv" method="post" enctype="multipart/form-data">
+        <input id="fb" name="filedata" class="easyui-filebox" style="width:400px" data-options="prompt:'Choose a file...'">
+        </br></br><input type="submit" name="name" value="确认上传" style="width:80px;float:right;" />
+    </form>
+</div>

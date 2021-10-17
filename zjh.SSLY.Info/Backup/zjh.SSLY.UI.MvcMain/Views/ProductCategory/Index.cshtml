@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script src="~/Controls/UserControls.js"></script>
+<script type="text/javascript">
+    $(function () {
+        GetTree();
+    });
+    function GetTree() {
+        $('#tt').treegrid({
+            url: '/ProductCategory/LoadTree',
+            idField: 'id',
+            fit: true,
+            treeField: 'text',
+            columns: [[
+                { field: 'text', title: '名称', width: 280, align: 'left' },
+                { field: 'id', hidden: true, width: 280, align: 'center' },
+                { field: 'Sort', title: '排序', width: 280, align: 'center' },
+                {
+                    field: 'ck', title: '操作', width: 280, align: 'center',
+                    formatter: function (value, row, index) {
+                        return "<a style='text-decoration:none;color: #652EF3;border: 1px solid  #652EF3;' href='javascript:void(0)' onclick='Eixt(" + row.id + "," + row.Fid + ",\"" + row.text + "\"," + row.Sort + ")'>&nbsp;编辑&nbsp;</a> &nbsp;<a style='text-decoration:none;color: #652EF3;border: 1px solid  #652EF3;' href='javascript:void(0)'>&nbsp;移除&nbsp;</a>";
+                    }
+                }
+            ]]
+        });
+    }
+
+    function execute() {
+        var ids = getCheckeds("CategoryTree");
+    }
+    function Add() {
+        $("#divCategory").css("display", "block");
+        $("#hiddID").val(0);
+        $('#divCategory').dialog({
+            title: "新增",
+            width: 350,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true
+        });
+        //var p = { Url: "/ProductCategory/LoadTree", idField: "id", treeField: "text", title: "分类", tree: "CategoryTree", div: "ddTree", checkbox: false };
+        //OpenTreeDialog(p);
+    }
+    function Eixt(id, Fid, text, sort) {
+        $("#hiddID").val(id);
+        $("#divCategory").css("display", "block");
+        $('#divCategory').dialog({
+            title: "新增",
+            width: 350,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true
+        });
+        $("#cc").combotree("setValue", Fid);
+        $("#Node").textbox("setText", text);
+        $("#Sort").textbox("setText", sort);
+    }
+    function SubmitForm() {
+        var p = { "Node": $("#Node").textbox("getText"), "Sort": $("#Sort").textbox("getText"), "FID": $("#cc").combotree("getValue"), "ID": $("#hiddID").val() };
+        $.get("/ProductCategory/Save", p, function (data) {
+            $('#divCategory').dialog("close");
+            GetTree();
+        });
+    }
+
+
+</script>
+
+<a id="btnOk" href="javascript:void(0)" onclick="Add()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">添加</a>
+<table id="tt" style="width:600px;height:400px"></table>
+<div id="ddTree" style="display:none;">
+    <table id="CategoryTree"></table>
+    <div style="width: 96%; text-align: center; position: absolute; bottom: 5px; right: 5px; padding-top: 5px; padding-bottom: 10px; background-color: #D4D4D4; height: 20px; ">
+        <a id="btnOk" href="javascript:void(0)" onclick="execute()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+        <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+    </div>
+</div>
+<div id="divCategory" style="display:none;">
+    <form action="/" id="ff" method="post">
+        <input type="hidden" name="ID" id="hiddID" value="0" />
+        <table width="90%" style="padding-top:20px;" align="center" id="general-table">
+            <tbody>
+                <tr>
+                    <td style="text-align: right;">
+                        父级：
+                    </td>
+                    <td>
+                        <select id="cc" class="easyui-combotree" name="FID" style="width: 175px;" data-options="url:'/ProductCategory/LoadTree?combo=combo'"></select><span style="color: #ff0000">*</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: right;">
+                        分类名称：
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="Node" id="Node" style="width: 175px; " type="text" /><span style="color: #ff0000">*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;">
+                        排序：
+                    </td>
+                    <td><input class="easyui-textbox" name="Sort" id="Sort" style="width: 175px; " type="text" /><span style="color: #ff0000">*</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="width: 97.5%; text-align: center; position: absolute; bottom: 5px; right: 5px; padding-top: 5px; padding-bottom: 10px; background-color: #D4D4D4; height: 20px; ">
+            <a id="btnOk" href="javascript:void(0)" onclick="SubmitForm()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+        </div>
+    </form>
+</div>

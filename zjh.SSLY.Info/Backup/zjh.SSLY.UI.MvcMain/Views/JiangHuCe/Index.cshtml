@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Baby时尚丽苑ERP</title>
+    <style type="text/css">
+    </style>
+    <script type="text/javascript">
+        function InsertData() {
+            $.post("/JiangHuCe/PvUvSummary", { "clientType": $("#clientType").val(), "SKU": $("#SKU").val(), "days": $("#days").val(), pvuv: $("#txtPv").val() }, function (data) {
+                alert(data);
+            });
+        }
+    </script>
+</head>
+<body>
+    </br>   </br>
+    <div style="width: 400px; margin: auto; text-align: center;">
+        <h1>江湖策PVUV</h1>
+        SKU:<input type="text" style="width: 100px;" id="SKU" name="name" value="" />
+        客户端: 
+        <select id="clientType">
+            <option value="pc">pc</option>
+            <option value="wireless">wireless</option>
+        </select>
+        </br> 
+     时间:<input type="text" id="days" style="width: 100px;" name="name" value="" />
+    </div>
+    </br>
+    <div style="width: 400px; height: 400px; margin: auto; text-align: center;">
+        <textarea style="width: 400px; height: 400px;" id="txtPv"></textarea>
+        <input type="button" name="name" style="float: right;" value="录入" onclick="InsertData()" />
+    </div>
+</body>
+</html>

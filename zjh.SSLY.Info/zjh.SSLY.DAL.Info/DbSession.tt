@@ -1,0 +1,60 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ include file="EF.Utility.CS.ttinclude"#><#@
+ output extension=".cs"#>
+ 
+<#
+
+CodeGenerationTools code = new CodeGenerationTools(this);
+MetadataLoader loader = new MetadataLoader(this);
+CodeRegion region = new CodeRegion(this, 1);
+MetadataTools ef = new MetadataTools(this);
+ 
+string inputBabyFile = @"..\\zjh.SSLY.Model.Info\\BabySSLYInfo.edmx";
+
+ 
+EdmItemCollection ItemBabyCollection = loader.CreateEdmItemCollection(inputBabyFile);
+
+
+string namespaceName = code.VsNamespaceSuggestion();
+
+EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileManager.Create(this);
+
+#>
+
+using zjh.SSLY.IDAL.Info;
+using System.Data.Objects;
+namespace zjh.SSLY.DAL.Info
+{
+    public partial class DbSession : IDbSession
+    {
+ 
+
+<#
+// Emit Entity Types
+
+foreach (EntityType entity in ItemBabyCollection.GetItems<EntityType>().OrderBy(e => e.Name))
+{
+    //fileManager.StartNewFile(entity.Name + "RepositoryExt.cs");
+    //BeginNamespace(namespaceName, code);    
+#>	
+		private I<#=entity.Name#>Repository _<#=entity.Name#>Repository;
+
+        public I<#=entity.Name#>Repository <#=entity.Name#>Repository
+        {
+            get
+            {
+                if (_<#=entity.Name#>Repository == null)
+                {
+                    _<#=entity.Name#>Repository = new <#=entity.Name#>Repository();
+                }
+                return _<#=entity.Name#>Repository;
+            }
+            set
+            {
+                _<#=entity.Name#>Repository = value;
+            }
+        }
+<#}#>
+	}
+	
+}

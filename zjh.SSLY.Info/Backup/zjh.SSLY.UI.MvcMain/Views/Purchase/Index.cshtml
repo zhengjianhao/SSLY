@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>进货单</title>
+    <script type="text/javascript">
+        $(function () {
+
+        });
+        function Save() {
+            $("#ExitID").dialog({
+                width: 700,
+                height: 500,
+                title: '新增采购单',
+                onLoadSuccess: function (data) {
+                    if (data.rows.length > 0) {
+                        $('#staffGird').datagrid("selectRow", 0);
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+    <table id="tt">
+    </table>
+    <div id="ExitID">
+        <table>
+            <tr>
+                <td>编号</td>
+                <td>
+                    <input type="type" name=" value=" " /></td>
+                <td></td>
+                <td></td>
+            </tr> 
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+﻿@{
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>仓库状况</title>
+    <style type="text/css">
+        #Image_Left {
+            width: 540px;
+            float: left;
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 420px;
+            overflow: scroll;
+        }
+
+        #Image_Right {
+            width: 420px;
+            float: left;
+            height: 420px;
+            border-left: 2px dashed #95B8E7;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0px;
+        }
+    </style>
+
+
+    <script type="text/javascript">
+        $(function () {
+            initDataGrid();
+        });
+        var isFist = false;
+        var rowID = 0;
+        function initDataGrid(params) {
+            $('#tt').datagrid({
+                url: '/StockView/LoadView',
+                striped: true,
+                remoteSort: false,
+                fit: true, 
+                fitColumns: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                nowrap: false, 
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: params,
+                columns: [[
+						{ field: 'ck', checkbox: true, align: 'center', width: 50 },
+                        { field: 'ID', checkbox: true, hidden: true, align: 'center', width: 50 },
+                        {
+                            field: 'MainImage', title: '图片', align: 'left', width: 200,
+                            formatter: function (value, row, index) {
+                                var tt = "";
+                                tt += "<ul style='float: left;'>";
+                                tt += "<li style=' padding: 0px;width: 40px;height:40px;float: left;'><a style='text-decoration:none;color:#000000;'   target='_blank' href='" + row.SupUrl + "'><img style='width:40px;height:40px;' src='" + value + "'/></a></li>";
+                                tt += "<li style='padding-left: 50px;height: 40px;'>" + row.Title + "</br>编码:" + row.SKU + "</li>";
+                                tt += "</ul>";
+                                return tt;
+                            }
+                        },
+                        { field: 'Qty', title: '总库存', width: 130, align: 'center' },
+                        { field: 'Leave', title: '数量', width: 130, align: 'center' },
+                        {
+                            field: 'ManufacturerCode', title: '款式', width: 130, align: 'center'
+                        },
+                        {
+                            field: 'Color', title: '属性', width: 130, align: 'center',
+                            formatter: function (value, row, index) {
+                                return "颜色:" + row.Color + "  </br>尺码/规格:" + row.CodeNum;
+                            }
+                        }
+                        
+                ]],
+                onLoadSuccess: function (data) {
+                    $("#spanSummary").text("   总库存:" + data.totalStock + "  现库存:" + data.nowStock + "  总成本:" + data.totalCost + "  剩余成本:" + data.nowCost);
+                }
+            });
+        }
+
+        //ID = sto.ID,
+        //       Qty = gr.Qty,
+        //       Leave = gr.Leave,
+        //       Title = sto.Title,
+        //       Price = gr.Price,
+        //       Cost = sto.Cost,
+        //       SKU = gr.Code,
+        //       CodeNum = sto.CodeNum,
+        //       Color = sto.Color,
+        //       MainImage = sto.MainImage
+
+        function Search() {
+            var sTime = $("#starkTime").datetimebox("getValue");
+            var eTime = $("#endTime").datetimebox("getValue");
+            var cc = $('#cc').combobox('getValue');
+            var txtField = $("#txtField").textbox("getValue");
+            var p = { "starkTime": sTime, "endTime": eTime, "Field": cc, "value": txtField };
+            initDataGrid(p);
+        }
+
+        function aterUpdateEdit() {
+            var displayE = $('#divProductEdit').css("display");
+            var displayA = $('#divProductAdd').css("display");
+            if (displayE != "none") {
+                $('#divProductEdit').dialog("close");
+            }
+            if (displayA != "none") {
+                $('#divProductAdd').dialog("close");
+            }
+            initDataGrid();
+        }
+
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',border:false" style="height: 100%;">
+            <div id="tbs" style="padding: 2px 5px; height: 6%;">
+                创建时间:
+                <input class="easyui-datebox" id="starkTime" style="width: 110px;">
+                To:
+                <input class="easyui-datebox" id="endTime" style="width: 110px">
+                <select id="cc" class="easyui-combobox" name="dept" style="width: 80px;">
+                    <option value="SKU">编号</option>
+                    <option value="Title">产品名称</option>
+                    <option value="SupplierID">供销商</option>
+                    <option value="Uid">创建人</option>
+                    <option value="Remark">备注</option>
+                </select>
+                <input class="easyui-textbox" style="width: 130px;" id="txtField"><a href="#" style="text-decoration: none;"> 更多</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Search()">查询</a>
+                <span id="spanSummary"></span>
+            </div>
+            <div style="height: 93%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+    </div>
+
+    <div id="divProductEdit" style="display: none; border: 0px;">
+        <div id="tst" class="easyui-tabs" data-options="fit:true" style="border: 0px; width: 100%; overflow-y: hidden; margin-bottom: 0px; height: 400px;">
+            <div title="入库记录" style="border: 0px;">
+                <iframe style="height: 99%; width: 99%;" id="ifrExit" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

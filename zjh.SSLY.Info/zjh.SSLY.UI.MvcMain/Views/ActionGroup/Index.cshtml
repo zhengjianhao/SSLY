@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        ActionGroupGrid();
+    });
+    var isFist = false;
+    var rowID = 0;
+    function ActionGroupGrid(params) {
+        $('#tt').datagrid({
+            url: '/ActionGroup/LoadView',
+            striped: true,
+            remoteSort: false,
+            width: 300,
+            height: 600,
+            fitColumns: true,
+            nowrap: false,
+            singleSelect: true,
+            rownumbers: true,
+            queryParams: params,
+            columns: [[ 
+                    { field: 'GroupName', title: '组名', align: 'center', width: 50 } 
+            ]],
+            toolbar: [{
+                id: 'btnDownShelf',
+                text: '添加',
+                iconCls: 'icon-add',
+                handler: function () {
+                    $("#GID").val("0");
+                    $("#divActionGroup").css("display", "block");
+                    $("#divActionGroup").dialog({
+                        width:290,
+                        height: 150,
+                        title: "权限添加",
+                        modal: true,
+                        buttons: [{
+                            text: 'Ok',
+                            iconCls: 'icon-ok',
+                            handler: function () {
+                                $('#ff').form('submit', {
+                                    url: "/ActionGroup/Save",
+                                    success: function (data) {
+                                        alert(data)
+                                    }
+                                });
+                            }
+                        }, {
+                            text: 'Cancel',
+                            handler: function () {
+                            }
+                        }]
+                    });
+                }
+            }, {
+                id: 'btnUpdate',
+                text: '修改产品',
+                iconCls: 'icon-edit',
+                handler: function () {
+                    $("#divActionGroup").css("display", "block");
+                    var rows = $('#tt').datagrid('getSelections');
+                    if (rows.length == 0) {
+                        alert("请选择要编辑的产品");
+                        return;
+                    }
+                    if (rows.length > 1) {
+                        alert("只能对一个产品编辑");
+                        return;
+                    }
+                    $("#divActionGroup").window({
+                        width: 900,
+                        height: 500,
+                        fit: false,
+                        closed: false,
+                        cache: false,
+                        modal: true,
+                        title: "产品编辑"
+                    });
+                    $("#ifrExit").attr("src", "ActionGroup/Edit?id=" + rows[0].ID);
+                    $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                }
+            }, {
+                id: 'btnDelete',
+                text: '删除',
+                iconCls: 'icon-image_Delete',
+                handler: function () {
+                    var rows = $('#tt').datagrid('getSelections');
+                    var ids = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        ids += rows[i].ID + ",";
+                    }
+                    $.messager.confirm("消息", "是否需要删除这条记录！", function (b) {
+                        if (b) {
+                            $.get("/ActionGroup/Delete", "ids=" + ids, function (data) {
+                                if (data == "Ok") {
+                                    $.messager.alert("消息", "删除完成！");
+                                    initDataGrid({});
+                                } else {
+                                    $.messager.alert("消息", "删除失败！");
+                                }
+                            });
+                        }
+                    });
+                }
+            }],
+            //onClickRow: function (rowIndex, rowData) {
+            //    $("#ZImage").attr("src", rowData.ZImage);
+            //    var p = { sku: rowData.SKU };
+            //    LoadDetails(p);
+            //},
+            onHeaderContextMenu: function (e, field) {
+            }
+        });
+    } 
+    function aterUpdateEdit() {
+        var displayE = $('#divActionGroupEdit').css("display");
+        var displayA = $('#divActionGroupAdd').css("display");
+        if (displayE != "none") {
+            $('#divActionGroupEdit').dialog("close");
+        }
+        if (displayA != "none") {
+            $('#divActionGroupAdd').dialog("close");
+        }
+        initDataGrid();
+    }
+
+</script>
+<table id="tt"></table>
+
+<div id="divActionGroup" style="display: none;" method="post">
+    <form id="ff"> 
+        <table>
+            <input type="hidden" name="ID" value="" id="GID" />
+            <tr><td>组名</td><td><input class="easyui-textbox" name="GroupName" style="width:200px"></td></td></tr> 
+            <tr><td>类型</td><td><input class="easyui-textbox" name="GroupType" style="width:200px"></td></td></tr> 
+        </table>
+    </form>
+</div>

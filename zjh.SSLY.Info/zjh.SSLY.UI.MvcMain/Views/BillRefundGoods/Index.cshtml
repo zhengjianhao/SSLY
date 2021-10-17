@@ -1,0 +1,357 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>退件订单列表</title>
+    <script type="text/javascript">
+        $(function () {
+            Load();
+        });
+        function Load() {
+            $('#tt').datagrid({
+                singleSelect: true,
+                remoteSort: false,
+                fitColumns: true,
+                fit: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                nowrap: false,
+                url: '/BillRefundGoods/LoadView',
+                queryParams: { "status": "50", "rows": "30", "page": "1" },//status, int rows, int page
+                columns: [[
+                 { field: 'cks', checkbox: true, align: 'center', width: 10 },
+                 { title: '订单号', field: 'Formno', align: 'center', width: 30 },
+                 { title: '运费', field: 'Freight', align: 'center', width: 30 },
+                 { title: '供应商', field: 'SupplierID', align: 'center', width: 30 },
+                 { title: '经手人', field: 'Uid', align: 'center', width: 30 },
+                 { title: '摘要', field: 'Department', align: 'center', width: 30 },
+                 {
+                     title: '创建时间', field: 'CreateTime', align: 'center', width: 80,
+                     formatter: function (value, row, index) {
+                         return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                     }
+                 }
+                ]],
+                toolbar: [{
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#digAdd").css("display", "block");
+                        $('#digAdd').window({
+                            title: '订单',
+                            width: 700,
+                            height: 400,
+                            closed: false,
+                            cache: false,
+                            modal: true
+                        });
+                        var p = { "formno": "" };
+                        OperationDetails(p);
+                    }
+                }, {
+                    text: '编辑',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $("#digAdd").css("display", "block");
+                        $('#digAdd').window({
+                            title: '订单',
+                            width: 700,
+                            height: 400,
+                            closed: false,
+                            cache: false,
+                            modal: true
+                        });
+                        var p = { "formno": "PUR150800004" };
+                        OperationDetails(p);
+                    }
+                },
+                  {
+                      text: '删除',
+                      iconCls: 'icon-remove',
+                      handler: function () {
+                          $("#digAdd").css("display", "block");
+                          $('#digAdd').window({
+                              title: '订单',
+                              width: 700,
+                              height: 400,
+                              closed: false,
+                              cache: false,
+                              modal: true
+                          });
+                          var p = { "formno": "" };
+                          OperationDetails(p);
+                      }
+                  }],
+                onClickRow: function (rowIndex, rowData) {
+                    var p = { "formno": rowData.Formno };
+                    LoadDetails(p);
+                }
+            });
+        }
+        function LoadDetails(param) {
+            $('#ttDeltail').datagrid({
+                url: '/BillRefundGoods/LoadDtl',
+                striped: true,
+                remoteSort: false,
+                fit: true,
+                fitColumns: true,
+                nowrap: false,
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: param,
+                columns: [[
+                          { title: 'SKU', field: 'Code', align: 'center', width: 50 },
+                          { title: '数量', field: 'Qty', align: 'center', width: 50 },
+                          { title: '剩余', field: 'Leave', align: 'center', width: 50 },
+                          { title: '价格', field: 'Price', align: 'center', width: 50 }
+                ]]
+            });
+        }
+
+        //操作明细
+        function OperationDetails(param) {
+            $('#ttProductList').datagrid({
+                url: '/BillRefundGoods/LoadDtl',
+                striped: true,
+                remoteSort: false,
+                fit: true,
+                fitColumns: true,
+                nowrap: false,
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: param,
+                columns: [[
+                          {
+                              title: '产品编号', field: 'Code', align: 'center', width: 65, editor: {
+                                  type: "combogrid", options: {
+                                      delay: 500,
+                                      panelWidth: 620,
+                                      mode: 'remote',
+                                      url: '/Product/LoadView',
+                                      idField: 'ID',
+                                      textField: 'name',
+                                      columns: [[
+                                          { field: 'SKU', title: '产品编号', width: 80, align: 'center', sortable: true },
+                                          { field: 'Title', title: '名称', width: 200, align: 'left', sortable: true },
+                                          { field: 'ManufacturerCode', title: '款式', width: 50, align: 'center', sortable: true },
+                                          { field: 'Color', title: '颜色', width: 80, align: 'center', sortable: true },
+                                          { field: 'CodeNum', title: '规格', width: 80, align: 'center', sortable: true }
+                                      ]],
+                                      onClickRow: function (rowIndex, rowData) {
+                                          $("#ttProductList").datagrid('updateRow', {
+                                              index: editIndex,
+                                              row: {
+                                                  Code: rowData.SKU,
+                                                  Title: rowData.Title,
+                                                  Color: rowData.Color,
+                                                  ManufacturerCode: rowData.ManufacturerCode,
+                                                  CodeNum: rowData.CodeNum
+                                              }
+                                          });
+                                          $("#ttProductList").datagrid('beginEdit', editIndex);
+                                      }
+                                  }
+                              }
+                          },
+                          { title: '产品名称', field: 'Title', align: 'center', width: 100 },
+                          { field: 'ManufacturerCode', title: '款式', width: 50, align: 'center', sortable: true },
+                          { field: 'Color', title: '颜色', width: 50, align: 'center', sortable: true },
+                          { field: 'CodeNum', title: '规格', width: 50, align: 'center', sortable: true },
+                          { title: '数量', field: 'Qty', align: 'center', width: 50, editor: { type: 'numberbox' } },
+                          { title: '价格', field: 'Price', align: 'center', width: 50, editor: { type: 'numberbox', options: { precision: 2 } } }
+                ]], toolbar: [{
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: append
+                }, {
+                    text: '保存',
+                    iconCls: 'icon-edit',
+                    handler: accept
+                }, {
+                    text: '撤销',
+                    iconCls: 'icon-edit',
+                    handler: reject
+                }, {
+                    text: '移除',
+                    iconCls: 'icon-remove',
+                    handler: removeit
+                }],
+                onClickCell: onClickCell
+
+            });
+        }
+
+
+        function SkuSubmit() {
+            var hdr = {};
+            $("[txtfield]").each(function (index, element) {
+                hdr[$(element).attr("txtfield")] = $(element).textbox("getValue");
+            });
+            var rows = $("#ttProductList").datagrid("getRows");
+
+            $.post("/BillRefundGoods/Save", { "jsonHdr": JSON.stringify(hdr), "jsonRows": JSON.stringify(rows) }, function (data) {
+                if (data == "Ok") {
+                    $.messager.alert('消息提示', '成功添加。');
+                    Load();
+                    $('#digAdd').window("close");
+                    return;
+                }
+                $.messager.alert('消息提示', '添加失败。');
+            })
+        }
+
+        function Cancel() {
+            $('#digAdd').window("close");
+        }
+
+
+
+        var editIndex = undefined;
+        function endEditing() {
+            if (editIndex == undefined) { return true }
+            if ($('#ttProductList').datagrid('validateRow', editIndex)) {
+                var ed = $('#ttProductList').datagrid('getEditor', { index: editIndex, field: 'Code' });
+                var Code = $(ed.target).combobox('getText');
+                $('#ttProductList').datagrid('getRows')[editIndex]['Code'] = Code;
+                $('#ttProductList').datagrid('endEdit', editIndex);
+                editIndex = undefined;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function onClickCell(index, field) {
+            if (editIndex != index) {
+                if (endEditing()) {
+                    $('#ttProductList').datagrid('selectRow', index)
+                            .datagrid('beginEdit', index);
+                    var ed = $('#ttProductList').datagrid('getEditor', { index: index, field: field });
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                    editIndex = index;
+                } else {
+                    $('#ttProductList').datagrid('selectRow', editIndex);
+                }
+            }
+        }
+        function append() {
+            if (endEditing()) {
+                var row = { Code: "", Title: "", Qty: 0, Price: 0.00 };
+                $('#ttProductList').datagrid('appendRow', row);
+                editIndex = $('#ttProductList').datagrid('getRows').length - 1;
+                $('#ttProductList').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+            }
+        }
+        function removeit() {
+            if (editIndex == undefined) { return }
+            $('#ttProductList').datagrid('cancelEdit', editIndex)
+                    .datagrid('deleteRow', editIndex);
+            editIndex = undefined;
+        }
+        function accept() {
+            if (endEditing()) {
+                $('#ttProductList').datagrid('acceptChanges');
+            }
+        }
+        function reject() {
+            $('#ttProductList').datagrid('rejectChanges');
+            editIndex = undefined;
+        }
+        function getChanges() {
+            var rows = $('#ttProductList').datagrid('getChanges');
+            alert(rows.length + ' rows are changed!');
+        }
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',split:true,border:false" style="height: 70%;">
+            <div id="tb" style="padding: 2px 5px; height: 9%;">
+                <select id="cc" class="easyui-combobox" name="dept" style="width: 120px;">
+                    <option>订单号</option>
+                    <option>供应商</option>
+                    <option>创建人</option>
+                    <option>创建时间</option>
+                </select>
+                <input class="easyui-textbox" style="width: 120px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search">查询</a>
+            </div>
+            <div style="height: 89%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+        <div data-options="region:'center',border:false" style="height: 10%;">
+            <div class="easyui-tabs" data-options="fit:true">
+                <div title="产品明细" style="padding-top: 3px;">
+                    <table id="ttDeltail"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="digAdd" style="display: none;">
+        <div style="width:665px;height:340px;padding:10px;">
+            <div class="easyui-layout" data-options="fit: true">
+                <div data-options="region:'north',split:true" style="height:80px;">
+                    <table style="margin-left: auto; width: 95%; height: 95%; margin-right:auto; padding:8px; ">
+                        <tr>
+                            <td>
+                                编号：
+                            </td>
+                            <td>
+                                <input class="easyui-textbox" data-options="readonly:true" txtfield="Formno" style="width: 120px;" id="Title" type="text" name="Title">
+                            </td>
+                            <td>
+                                供应单位：
+                            </td>
+                            <td>
+                                <input class="easyui-combobox" txtfield="SupplierID" data-options="valueField:'value',textField:'text',url:'/Supplier/LoadCombo'" style="width: 120px;" id="SupplierID" type="text" name="SupplierID">
+                            </td>
+                            <td>
+                                经手人：
+                            </td>
+                            <td>
+                                <input class="easyui-textbox" txtfield="Uid" data-options="value:'1'" style="width: 120px;" id="Uid" type="text" name="Uid">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                仓库：
+                            </td>
+                            <td>
+                                <input class="easyui-textbox" data-options="value:'GZ'" txtfield="WHID" style="width: 120px;" id="WHID" type="text" name="WHID">
+                            </td>
+                            <td>
+                                运费：
+                            </td>
+                            <td>
+                                <input class="easyui-numberbox" data-options="min:0,precision:2,value:0" txtfield="Freight" style="width: 120px;" id="Freight" type="text" name="Freight">
+                            </td>
+                            <td>摘要：</td>
+                            <td>
+                                <input class="easyui-textbox" txtfield="Description" style="width: 120px;" id="Description" type="text" name="Description">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div data-options="region:'center'">
+                    <table id="ttProductList"></table>
+                </div>
+                <div data-options="region:'south'" style="text-align:right;height:40px;">
+                    <div style="margin:5px;">
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="SkuSubmit()" style="width:80px;">Ok</a>
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="Cancel()" style="width: 80px; ">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

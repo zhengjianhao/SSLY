@@ -1,0 +1,7 @@
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\bin\Release\zjh.SSLY.Model.Info.dll.config
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\bin\Release\zjh.SSLY.Model.Info.dll
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\bin\Release\zjh.SSLY.Model.Info.pdb
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\obj\Release\zjh.SSLY.Model.Info.csprojAssemblyReference.cache
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\obj\Release\zjh.SSLY.Model.Info.csproj.CoreCompileInputs.cache
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\obj\Release\zjh.SSLY.Model.Info.dll
+F:\zjh.SSLY.Info\zjh.SSLY.Model.Info\obj\Release\zjh.SSLY.Model.Info.pdb

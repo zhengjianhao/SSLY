@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+
+<script type="text/javascript">
+
+    //淘宝帐号列表.
+
+    $(function () {
+        OperationDetails();
+    });
+    function OperationDetails() {
+        $('#ttTbStore').datagrid({
+            url: '/TbStore/LoadView',
+            striped: true,
+            remoteSort: false,
+            fit: true, 
+            nowrap: false,
+            singleSelect: true,
+            rownumbers: true,
+            queryParams: {},
+            columns: [[
+                      { field: 'Account', title: '帐号', align: 'center', width:150, editor: "textbox" },
+                      { field: 'TaobaoUserId', title: '用户ID', width: 150, align: 'center', editor: "textbox" },
+                      { field: 'Refresh_token', title: 'RefreshToken', width: 150, align: 'center', editor: "textbox" },
+                      { field: 'SessionKey', title: 'SessionKey', width: 150, align: 'center', editor: "textbox" },
+                      { field: 'CreateTime', title: '创建时间', width: 150, align: 'center' },
+                      { field: 'Uid', title: '创建人', width: 150, align: 'center' }
+            ]], toolbar: [{
+                text: '添加',
+                iconCls: 'icon-add',
+                handler: append
+            }, {
+                text: '保存',
+                iconCls: 'icon-edit',
+                handler: accept
+            }, {
+                text: '撤销',
+                iconCls: 'icon-edit',
+                handler: reject
+            }, {
+                text: '移除',
+                iconCls: 'icon-remove',
+                handler: removeit
+            }],
+            onClickCell: onClickCell
+
+        });
+    }
+
+
+
+    //TbStore
+    var editIndex = undefined;
+    function endEditing() {
+        if (editIndex == undefined) { return true }
+        if ($('#ttTbStore').datagrid('validateRow', editIndex)) {
+            var ed = $('#ttTbStore').datagrid('getEditor', { index: editIndex, field: 'Code' });
+            var Code = $(ed.target).combobox('getText');
+            $('#ttTbStore').datagrid('getRows')[editIndex]['Code'] = Code;
+            $('#ttTbStore').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#ttTbStore').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                var ed = $('#ttTbStore').datagrid('getEditor', { index: index, field: field });
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#ttTbStore').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    function append() {
+        if (endEditing()) {
+            var row = { Code: "", Title: "", Qty: 0, Price: 0.00 };
+            $('#ttTbStore').datagrid('appendRow', row);
+            editIndex = $('#ttTbStore').datagrid('getRows').length - 1;
+            $('#ttTbStore').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+        }
+    }
+    function removeit() {
+        if (editIndex == undefined) { return }
+        $('#ttTbStore').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+    function accept() {
+        if (endEditing()) {
+            $('#ttTbStore').datagrid('acceptChanges');
+        }
+    }
+    function reject() {
+        $('#ttTbStore').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges() {
+        var rows = $('#ttTbStore').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+</script> 
+<table id="ttTbStore"></table>

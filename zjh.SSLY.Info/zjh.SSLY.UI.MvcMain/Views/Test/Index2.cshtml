@@ -1,0 +1,98 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index2</title>
+    <link href="/jquery-easyui-1.4/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/jquery-easyui-1.4/themes/icon.css" rel="stylesheet" />
+    <script src="~/jquery-easyui-1.4/jquery.min.js"></script>
+    <script src="/jquery-easyui-1.4/jquery.easyui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#tColors').datagrid({
+                url: '/Test/AIAI',
+                width: 455,
+                height: 300,
+                fitColumns: true,
+                idField: 'ID',
+                loadMsg: '正在加载用户的信息...',
+                singleSelect: true,
+                queryParams: {},
+                columns: [[
+                        { field: 'Color', title: '主要颜色', width: 50, align: 'center', editor: 'text' },
+                        { field: 'CodeNum', title: '尺码', width: 80, align: 'center', editor: 'text' },
+                        { field: 'Price', title: '销售价', width: 80, align: 'center', editor: 'numberbox' }
+                ]],
+                toolbar: [{
+                    id: 'btnAddAttr',
+                    text: "添加",
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        if (endEditing()) {
+                            $("#tColors").datagrid('appendRow', 'Color', '红色');
+                            editIndex = $('#tColors').datagrid('getRows').length - 1;
+                            $('#tColors').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+                        }
+                    }
+                }, {
+                    id: 'btnOkAttr',
+                    text: "保存",
+                    iconCls: 'icon-save',
+                    handler: function () {
+                        if (endEditing()) {
+                            $('#tColors').datagrid('acceptChanges');
+                        }
+                    }
+                }, {
+                    id: 'btnCancelAttr',
+                    text: "撤消",
+                    iconCls: 'icon-undo',
+                    handler: function () {
+                        $('#tColors').datagrid('rejectChanges');
+                        editIndex = undefined;
+                    }
+                }, {
+                    id: 'btnDelAttr',
+                    text: "移除",
+                    iconCls: 'icon-remove',
+                    handler: function () {
+
+                    }
+                }],
+                onClickRow: onClickRow
+            });
+        });
+        var editIndex = undefined;
+        function endEditing() {
+            if (editIndex == undefined) { return true }
+            if ($('#tColors').datagrid('validateRow', editIndex)) {
+                $('#tColors').datagrid('endEdit', editIndex);
+                editIndex = undefined;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function onClickRow(index, rowData) {
+            if (editIndex != index) {
+                if (endEditing()) {
+                    $('#tColors').datagrid('selectRow', index).datagrid('beginEdit', index);
+                    editIndex = index;
+                } else {
+                    $('#tColors').datagrid('selectRow', editIndex);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <table id="tColors"></table>
+    </div>
+</body>
+</html>

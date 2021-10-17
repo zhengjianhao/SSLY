@@ -1,0 +1,137 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ExitImages</title>
+    <script src="/Scripts/jquery-1.8.2.js"></script>
+    <script src="/Content/SWFupload/swfupload.js"></script>
+    <script src="/Content/SWFupload/handlers.js"></script>
+    <style type="text/css">
+        #Image_Left {
+            width: 580px;
+            float: left;
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 420px;
+            overflow: scroll;
+        }
+
+        #Image_Right {
+            width: 330px;
+            float: left;
+            height: 420px;
+            border-left: 2px dashed #95B8E7;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function () { 
+            UpLoadFileBox(@ViewBag.ID);
+        });
+        function UpLoadFileBox(ID) {
+            var swfu = new SWFUpload({
+                // Backend Settings
+                upload_url: "/Product/UpLoadFile",
+                post_params: {
+                    "ID": ID
+                },
+                file_size_limit: "10 MB",
+                file_types: "*.jpg;*.gif;*.png",
+                file_types_description: "JPG Images",
+                file_upload_limit: 0,    //
+                swfupload_preload_handler: preLoad,
+                swfupload_load_failed_handler: loadFailed,
+                file_queue_error_handler: fileQueueError,
+                file_dialog_complete_handler: fileDialogComplete,
+                upload_progress_handler: uploadProgress,
+                upload_error_handler: uploadError,
+                upload_success_handler: ShowMsg,
+                upload_complete_handler: uploadComplete,
+                // Button settings
+                button_image_url: "/Content/SWFupload/images/XPButtonNoText_160x22.png",
+                button_placeholder_id: "spanButtonPlaceholder",
+                button_width: 160,
+                button_height: 22,
+                button_text: '<span class="button">请选择图片<span class="buttonSmall">(10 MB Max)</span></span>',
+                button_text_style: '.button { font-family: Helvetica, Arial, sans-serif; font-size: 14pt; } .buttonSmall { font-size: 10pt; }',
+                button_text_top_padding: 1,
+                button_text_left_padding: 5,
+                flash_url: "/Content/SWFupload/swfupload.swf",	// Relative to this file
+                flash9_url: "/Content/SWFupload/swfupload_FP9.swf",	// Relative to this file
+                custom_settings: {
+                    upload_target: "divFileProgressContainer"
+                },
+                debug: false
+            });
+            function ShowMsg(file, serverData) {//serverData:从服务端返回的数据
+                var data = serverData.split(":");
+                if (data[0] == "ok") {
+                    document.getElementById("imgok").src = data[1];
+                }
+            } 
+        }
+    </script>
+</head>
+<body> 
+    
+        <div id="Image_Left">
+            <table id="ImagesTable">
+                @for (int i = 0; i < ViewBag.ImageList.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        @: <tr>
+                    }
+                    else if (i % 4 == 0)
+                    {
+                        @:</tr><tr>
+                    }
+                     <td style="text-align: center; width: 100px;">
+                         <img style="width:100px;height:100px;" src="@ViewBag.ImageList[i].Path" />
+                         <br><span>@Path.GetFileNameWithoutExtension(ViewBag.ImageList[i].Path).Substring(0,16)</span>
+                         <br><a href="javascript:void(0)">删除</a>
+                     </td>
+                    if (i == ViewBag.ImageList.Count - 1)
+                    {
+                        @:</tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="Image_Right">
+            <table>
+                <tr>
+                    <td style="padding-left:10px; width: 250px; height: 250px;">
+                        <img style="width: 250px;" src="http://img2.67.com/forum/201303/10/235927fm547rm76044k6fe.jpg" />
+                    </td>
+                    <td>
+                        <img style="padding-left:5px; width: 75px;height:75px;" src="http://img2.67.com/forum/201303/10/235927fm547rm76044k6fe.jpg" />
+                        <br />   主图
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div id="filebox" style=" padding-left: 10px;">
+                            图片上传：*建议700*700<br />
+                        </div>
+                        <div id="content">
+                            <div id="swfu_container" style="margin: 0px 10px;">
+                                <div>
+                                    <span id="spanButtonPlaceholder"></span>
+                                </div>
+                                <div id="divFileProgressContainer" style="height: 75px;"></div>
+                            </div>
+                            <img id="imgok" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div> 
+</body>
+</html>

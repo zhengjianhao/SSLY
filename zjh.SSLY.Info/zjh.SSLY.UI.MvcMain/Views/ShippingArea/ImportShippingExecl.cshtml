@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+
+<div style="width:280px;margin:auto;">
+    <form action="/ShippingArea/ImportShippingExeclFile" method="post" enctype="multipart/form-data">
+        <table>
+            <tr> 
+                <td><input type="radio" name="shippingType" value="1" />格式1：区/国家横轴，重量纵轴固定价</td>
+            </tr>
+            <tr> 
+                <td><input type="radio" name="shippingType" value="2" />格式2：区/国家纵轴，重量横轴固定价</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="shippingType" value="3" />格式3：区/国家横轴，重量纵轴，按公斤</td>
+            </tr>
+            <tr> 
+                <td><input class="easyui-combobox" id="Shipping_ID" name="Shipping_ID"  style="width: 220px;" data-options="url:'/Shipping/LoadCombo'"></td>
+            </tr> 
+            <tr>
+                <td><input id="fb" name="filedata" class="easyui-filebox" style="width:220px" data-options="prompt:'Choose a file...'"></td>
+            </tr>
+            <tr><td><input type="submit" name="name" value="确认上传" style="width:80px;float:right;" /></td></tr>
+        </table>
+    </form>
+</div>

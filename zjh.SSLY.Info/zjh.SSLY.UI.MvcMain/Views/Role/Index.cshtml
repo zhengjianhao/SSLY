@@ -1,0 +1,236 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+
+<script type="text/javascript">
+
+    $(function () {
+        initDataGrid();
+
+        $("#addRoleDiv").css("display", "none");
+        $("#frmEdit").css("display", "none");
+
+    });
+
+
+    //初始化表格
+    function initDataGrid() {
+        $('#tt').datagrid({
+            url: '/Role/LoadAllRole',
+            title: '角色管理列表',
+            width: 700,
+            height: 400,
+            fitColumns: true,
+            idField: 'ID',
+            loadMsg: '正在加载用户的信息...',
+            pagination: true,
+            singleSelect: false,
+            pageSize: 10,
+            pageNumber: 1,
+            pageList: [10, 20, 30],
+            queryParams: {},
+            columns: [[//ID RName  DelFlag Remark RoleType
+                    { field: 'ck', checkbox: true, align: 'left', width: 50 },
+                    { field: 'ID', title: '编号', width: 20, align: 'center', },
+                    { field: 'RName', title: '角色名', width: 80, align: 'center', },
+                    { field: 'Remark', title: '描述', width: 30, align: 'center', },
+                    {
+                        field: 'czz', title: '操作', width: 30, align: 'center',
+                        formatter: function (value, row, index) {
+                            return "<a href='javascript:void(0)'style='text-decoration:none;' onclick='SetRoleAction(" + row.ID + ")' >[权限]</a>"
+                        }
+                    }
+            ]],
+            toolbar: [{
+                id: 'btnDownShelf',
+                text: '添加角色信息',
+                iconCls: 'icon-add',
+                handler: function () {
+                    //弹出 添加角色信息的div框
+                    shwoAddRole();
+                }
+            }, {
+                id: 'btnUpdate',
+                text: '修改角色信息',
+                iconCls: 'icon-edit',
+                handler: function () {
+                    dealtEdit();
+                }
+            }, {
+                id: 'btnDelete',
+                text: '删除',
+                iconCls: 'icon-remove',
+                handler: function () {
+                    dealtDelete();
+                }
+            }],
+            onHeaderContextMenu: function (e, field) {
+
+            }
+        });
+    }
+
+    //处理删除操作
+    function dealtDelete() {
+        var rows = $('#tt').datagrid('getSelections');
+        if (rows.length <= 0) {
+            $.messager.alert("提示信息", "请选择要删除角色信息！");
+        } else {
+
+            //删除之前先确认一下
+            $.messager.confirm("确认消息", "您是否要真的删除这些数据吗？", function (r) {
+                if (r) {
+                    //把要删除数据的id拿到之后，传递到后台，进行删除操作
+                    var strIds = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        strIds += rows[i].ID + ",";
+                    }
+                    //38,39,
+                    strIds = strIds.substring(0, strIds.length - 1);
+                    $.post("/Role/Delete", { ids: strIds }, function (data) {
+                        //删除成功后，刷新表格
+                        $('#tt').datagrid("clearSelections");
+
+                        initDataGrid();
+                    });
+                }
+            });
+
+        }
+    }
+
+    //处理  修改
+    function dealtEdit() {
+        //拿到选择的角色
+        var rows = $('#tt').datagrid('getSelections');
+        if (rows.length != 1) {
+            $.messager.alert("提示信息", "请选择要修改的一条角色信息！");
+        } else {
+            //alert(rows[0].ID);
+            //把当前要展示的页面的框架的src属性指向到具体的实体页面
+            $("#editFrm").attr("src", "/Role/Edit/" + rows[0].ID);
+
+            $("#frmEdit").css("display", "block");
+            $('#frmEdit').dialog({
+                title: "修改角色信息",
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                width: 500,
+                height: 400,
+                buttons: []
+            });
+        }
+    }
+
+    //显示添加角色 对话框
+    function shwoAddRole() {
+        $("#addRoleDiv").css("display", "block");
+        $('#addRoleDiv').dialog({
+            title: "添加角色信息",
+            maximizable: true,
+            resizable: true,
+            modal: true,
+            width: 500,
+            height: 400,
+            buttons: [{
+                text: '添加',
+                iconCls: 'icon-ok',
+                handler: function () {
+                    //alert('ok');
+                    //formAddUserInfo
+                    //提交表单
+                    $("#formAdd").submit();
+                }
+            }, {
+                text: '取消',
+                handler: function () {
+                    $('#addRoleDiv').dialog('close');
+                }
+            }]
+        });
+    }
+
+    //添加角色后执行的 事件响应方法
+    function afterAdded() {
+        //把 对话框关闭
+        $('#addRoleDiv').dialog('close');
+        //初始化一下表格
+        initDataGrid();
+    }
+
+    //修改角色之后调用次方法
+    function aterUpdateEdit() {
+        $('#frmEdit').dialog("close");
+        initDataGrid();
+    }
+
+
+    function SetRoleAction(roleID) {
+        $("#dlgAction").css("display", "block");
+        $("#dlgAction").dialog({
+            title: "权限设置",
+            maximizable: true,
+            resizable: true,
+            modal: true,
+            width: 250,
+            height: 400,
+            buttons: [{
+                text: '保存',
+                iconCls: 'icon-ok',
+                handler: function () {
+                    var nodes = $('#tt2').tree('getChecked');
+
+                    var ids = "";
+                    for (var i = 0; i < nodes.length; i++) {
+                        ids += nodes[i].ID;
+                        if (i != nodes.length - 1) {
+                            ids += + ",";
+                        }
+                    }
+                    //aid, int roleID
+                    var parm = { "aid": ids, "roleID": roleID };
+                    $.get("/ActionInfo/SetRoleAction", parm, function (data) {
+                        $.messager.alert("提示", data);
+                    });
+
+                }
+            }, {
+                text: '取消',
+                handler: function () {
+                    $('#addRoleDiv').dialog('close');
+                }
+            }]
+        });
+        $('#tt2').tree({
+            url: "/ActionInfo/LoadTree?roleID=" + roleID,
+            method: 'get',
+            animate: true, checkbox: true, lines: true
+        });
+    }
+</script>
+<div>
+
+    <table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit"></table>
+
+</div>
+<div id="dlgAction" style="display:none;"><ul id="tt2"></ul></div>
+
+<!------添加角色面板  div dialog---------------->
+<div id="addRoleDiv">
+    @using (Ajax.BeginForm("Create", "Role", new AjaxOptions() { HttpMethod = "Post", OnSuccess = "afterAdded" }, new { id = "formAdd" }))
+    {
+        <table>
+            <tr><td>角色名：</td><td><input type="text" name="RName" /></td></tr>
+            <tr><td>角色类型：</td><td><select name="RoleType"><option value="0">普通角色</option> <option value="1">管理员角色</option></select></td></tr>
+            <tr><td>备注：</td><td><textarea rows="4" cols="40" name="Remark"> </textarea></td></tr>
+        </table>
+    }
+</div>
+
+<!------修改角色面板  div dialog---------------->
+@*<div id="frmEdit">
+        <iframe id="editFrm" src="Error.htm" scrolling="no" frameborder="0" height="100%" width="100%"></iframe>
+    </div>*@

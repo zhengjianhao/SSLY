@@ -1,0 +1,150 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<script type="text/javascript">
+    $(function () { 
+        $("#SupplierID").combobox('setValue', '@ViewBag.Model.SupplierID');
+    });
+    function afterEdit() {
+        window.parent.aterUpdateEdit();
+    }
+
+    function SubmitForm() {
+        $('#ff').form('submit', {
+            url: "/Product/SaveEdit",
+            onSubmit: function () {
+            },
+            success: function (data) {
+                afterEdit();
+            }
+        });
+    }
+
+
+
+    var editIndex = undefined;
+    function endEditing() {
+        if (editIndex == undefined) { return true }
+        if ($('#dg').datagrid('validateRow', editIndex)) {
+            $('#dg').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onEndEdit(index, row, changes) {
+        var rows = $('#dg').datagrid('getChanges');
+        if (rows.length > 0) {
+            var row = rows[0];
+            var param = {
+                Color: row.Color,
+                GxQty: row.GxQty,
+                CodeNum: row.CodeNum,
+                ID: row.ID,
+                SKU: row.SKU
+            }
+            $.get("/Product/SaveEditDtl", param, function (data) {
+                $('#dg').datagrid('load');
+            });
+        }
+    }
+
+    function onClickRow(index) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#dg').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                editIndex = index;
+            } else {
+                $('#dg').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    function append() {
+        @*if (endEditing()) {
+            $('#dg').datagrid('appendRow', { Color: 'None', CodeNum: '0', GxQty: '0', Cost: '0', ID: '0', SKU: "@ViewBag.Model.SKU" });
+            editIndex = $('#dg').datagrid('getRows').length - 1;
+            $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+        }*@
+    }
+    function removeit() {
+        if (editIndex == undefined) { return }
+        $('#dg').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+    function accept() {
+        if (endEditing()) {
+            $('#dg').datagrid('acceptChanges');
+
+        }
+    }
+    function reject() {
+        $('#dg').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges() {
+        var rows = $('#dg').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+
+</script>
+<form action="/" id="ff" method="post">
+    <div style="width: 800px; text-align: center; height: 100%; margin: 0px; padding-bottom: 45px;">
+        <input type="hidden" name="ProAttr" id="ProAttr" value="" />
+        <input type="hidden" name="ID" id="ProID" value="@ViewBag.Model.ID" />
+        <table style="padding: 10px 30px 0px 30px; width: 100%;">
+            <tr>
+                <td style="width: 20%; text-align: right;">单号</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Formno'" style="width: 94%;" id="Formno" type="text" name="Formno">
+                    </input>
+                </td>
+                <td style="width: 20%; text-align: right;">商家编号</td>
+                <td style="height: 35px; width: 30%;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.SupplierID',readonly:true" style="width: 180px;" id="SupplierID" name="SupplierID"></input>
+                </td>
+            </tr> 
+            <tr>
+                <td style="width: 20%; text-align: right;">描述</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Description'" style="width: 180px;" id="Description" name="Description"></input>
+                </td> 
+                <td style="width: 20%; text-align: right;"> </td>
+                <td style="height: 35px;"> 
+                </td>
+
+            </tr> 
+            <tr>
+                <td></td>
+                <td colspan="3">
+                    <table id="dg" class="easyui-datagrid" style="width: 100%; height:200px;" data-options="iconCls: 'icon-edit', singleSelect: true,
+                           toolbar '#tb' , url '/BillPurchase/LoadDtl?formno=@ViewBag.Model.Formno' ,fitcolumns true,
+                           method 'get' ,onclickrow:onclickrow,onendedit:onendedit">
+                        <thead>
+                            <tr>
+                                <th data-options="field:'ID',hidden:true,hideColumn:true,width:90,align:'center',editor:'text'">编号</th>
+                                <th data-options="field:'SKU',hidden:true,hideColumn:true,width:90,align:'center',editor:'text'">SKU</th>
+                                <th data-options="field:'Color',width:90,align:'center',editor:'text'">颜色</th>
+                                <th data-options="field:'CodeNum',width:90,align:'center',editor:'text'">尺码/规格</th>
+                                <th data-options="field:'GxQty',width:90,align:'center',editor:'numberbox'">数量</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="tb" style="height: auto">
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">增加</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">移除</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤消</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="width: 100%; text-align: center; position: fixed; bottom: 0px; padding-top: 10px; background-color: #D4D4D4; height: 40px;">
+        <a id="btnOk" href="javascript:void(0)" onclick="javascript:SubmitForm()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+        <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+    </div>
+</form>

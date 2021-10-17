@@ -1,0 +1,11 @@
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.IDAL.Info.dll.config
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.IDAL.Info.dll
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.IDAL.Info.pdb
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.Model.Info.dll
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.Model.Info.pdb
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\bin\Release\zjh.SSLY.Model.Info.dll.config
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\obj\Release\zjh.SSLY.IDAL.Info.csprojAssemblyReference.cache
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\obj\Release\zjh.SSLY.IDAL.Info.csproj.CoreCompileInputs.cache
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\obj\Release\zjh.SSLY.IDAL.Info.csproj.CopyComplete
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\obj\Release\zjh.SSLY.IDAL.Info.dll
+F:\zjh.SSLY.Info\zjh.SSLY.IDAL.Info\obj\Release\zjh.SSLY.IDAL.Info.pdb

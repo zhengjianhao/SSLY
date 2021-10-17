@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="TbPrototypeDbModelStoreContainer" CdmEntityContainer="TbPrototypeDbEntities1">
+    <EntitySetMapping Name="TbProduct">
+      <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProduct">
+        <MappingFragment StoreEntitySet="TbProduct">
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="binds" ColumnName="binds" />
+          <ScalarProperty Name="sale_props" ColumnName="sale_props" />
+          <ScalarProperty Name="price" ColumnName="price" />
+          <ScalarProperty Name="desc" ColumnName="desc" />
+          <ScalarProperty Name="pic_url" ColumnName="pic_url" />
+          <ScalarProperty Name="modified" ColumnName="modified" />
+          <ScalarProperty Name="product_prop_imgs" ColumnName="product_prop_imgs" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="level" ColumnName="level" />
+          <ScalarProperty Name="pic_path" ColumnName="pic_path" />
+          <ScalarProperty Name="rate_num" ColumnName="rate_num" />
+          <ScalarProperty Name="sale_num" ColumnName="sale_num" />
+          <ScalarProperty Name="shop_price" ColumnName="shop_price" />
+          <ScalarProperty Name="standard_price" ColumnName="standard_price" />
+          <ScalarProperty Name="vertical_market" ColumnName="vertical_market" />
+          <ScalarProperty Name="customer_props" ColumnName="customer_props" />
+          <ScalarProperty Name="property_alias" ColumnName="property_alias" />
+          <ScalarProperty Name="product_id" ColumnName="product_id" />
+          <ScalarProperty Name="outer_id" ColumnName="outer_id" />
+          <ScalarProperty Name="created" ColumnName="created" />
+          <ScalarProperty Name="tsc" ColumnName="tsc" />
+          <ScalarProperty Name="cid" ColumnName="cid" />
+          <ScalarProperty Name="cat_name" ColumnName="cat_name" />
+          <ScalarProperty Name="props" ColumnName="props" />
+          <ScalarProperty Name="props_str" ColumnName="props_str" />
+          <ScalarProperty Name="binds_str" ColumnName="binds_str" />
+          <ScalarProperty Name="sale_props_str" ColumnName="sale_props_str" />
+          <ScalarProperty Name="collect_num" ColumnName="collect_num" />
+          <ScalarProperty Name="product_imgs" ColumnName="product_imgs" />
+          <ScalarProperty Name="product_extra_infos" ColumnName="product_extra_infos" />
+          <ScalarProperty Name="sell_pt" ColumnName="sell_pt" />
+          <ScalarProperty Name="cspu_feature" ColumnName="cspu_feature" />
+          <ScalarProperty Name="template_id" ColumnName="template_id" />
+          <ScalarProperty Name="commodity_id" ColumnName="commodity_id" />
+          <ScalarProperty Name="is_suite_effective" ColumnName="is_suite_effective" />
+          <ScalarProperty Name="suite_items_str" ColumnName="suite_items_str" />
+          <ScalarProperty Name="barcode_str" ColumnName="barcode_str" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TbProductExtraInfo">
+      <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductExtraInfo">
+        <MappingFragment StoreEntitySet="TbProductExtraInfo">
+          <ScalarProperty Name="product_id" ColumnName="product_id" />
+          <ScalarProperty Name="field_key" ColumnName="field_key" />
+          <ScalarProperty Name="field_name" ColumnName="field_name" />
+          <ScalarProperty Name="field_value" ColumnName="field_value" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TbProductImg">
+      <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductImg">
+        <MappingFragment StoreEntitySet="TbProductImg">
+          <ScalarProperty Name="pid" ColumnName="pid" />
+          <ScalarProperty Name="product_id" ColumnName="product_id" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="position" ColumnName="position" />
+          <ScalarProperty Name="created" ColumnName="created" />
+          <ScalarProperty Name="modified" ColumnName="modified" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TbProductPropImg">
+      <EntityTypeMapping TypeName="TbPrototypeDbModel.TbProductPropImg">
+        <MappingFragment StoreEntitySet="TbProductPropImg">
+          <ScalarProperty Name="product_id" ColumnName="product_id" />
+          <ScalarProperty Name="props" ColumnName="props" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="position" ColumnName="position" />
+          <ScalarProperty Name="created" ColumnName="created" />
+          <ScalarProperty Name="modified" ColumnName="modified" />
+          <ScalarProperty Name="ppid" ColumnName="ppid" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

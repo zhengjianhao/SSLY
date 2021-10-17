@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+} 
+
+
+
+
+@using (Ajax.BeginForm("Create", "Role", new AjaxOptions() { HttpMethod = "Post", OnSuccess = "afterAdded" }, new { id = "formAdd" }))
+{
+    <table>
+        <tr><td>角色名：</td><td><input type="text" name="RName" /></td></tr> 
+        <tr><td>描述：</td><td><textarea rows="4" cols="40" name="Remark"> </textarea></td></tr> 
+    </table>
+    <table id="tt"></table>
+
+}

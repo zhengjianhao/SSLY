@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Month";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<style type="text/css">
+    ul {
+        list-style: none;
+        padding: 0px;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        var p = {};
+        initDataGrid(p);
+    });
+    function initDataGrid(params) {
+        var coulums = [{ field: 'ID', checkbox: true, hidden: true, align: 'center', width: 50 },
+                       {
+                           field: 'ZImage', title: '图片', align: 'left', width: 150,
+                           formatter: function (value, row, index) {
+                               var tt = "";
+                               tt += "<ul>";
+                               tt += "<li style=' padding: 0px;width: 40px;height:40px;float: left;'><a style='text-decoration:none;color:#000000;'   target='_blank' href='" + row.SupUrl + "'><img style='width:35px;height:35px;' src='" + value + "'/></a></li>";
+                               tt += "<li style='padding-left: 40px;height: 20px;'>" + row.Title + "</br>编码:" + row.SKU + "</li>";
+                               tt += "</ul>";
+                               return tt;
+                           }
+                       },
+                       {
+                           field: 'CreateTime', title: '上架时间', width: 120, align: 'center', formatter: function (value, row, index) {
+                                return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                            }
+                       }
+        ];
+      
+        for (var i = 1; i < @ViewBag.days; i++) {
+            var coulum = new Object();
+            coulum.field=i.toString();
+            coulum.title=i.toString();
+            coulum.align='center';
+            coulum.width=50;
+            coulums.push(coulum);
+        }
+
+        $('#tt').datagrid({
+            url: '/Product/LoadData',
+            striped: true,
+            remoteSort: false,
+            fit: true,
+            pagination: true,
+            fitColumns: true,
+            nowrap: false,
+            pageList: [30, 50, 100],
+            singleSelect: true,
+            rownumbers: true,
+            queryParams: params,
+            columns: [coulums]
+        });
+    }
+
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'north',border:false" style="height: 100%;">
+        <div id="tbs" style="padding: 2px 5px; height: 6%;">
+            创建时间:
+                <input class="easyui-datebox" id="starkTime" style="width: 110px;">
+            
+            <select id="cc" class="easyui-combobox" name="dept" style="width: 80px;">
+                <option value="SKU">编号</option> 
+            </select>
+            <input class="easyui-textbox" style="width: 130px;" id="txtField"><a href="#" style="text-decoration: none;"> 更多</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Search()">查询</a>
+        </div>
+        <div style="height: 93%;">
+            <table id="tt"></table>
+        </div>
+    </div>
+</div>

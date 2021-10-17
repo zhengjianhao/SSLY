@@ -1,0 +1,212 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>物流方式</title>
+    <script type="text/javascript">
+        $(function () {
+            Load();
+        });
+        function Load() {
+            $('#tt').datagrid({
+                fit: true,
+                fitColumns: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                singleSelect: true,
+                rownumbers: true,
+                remoteSort: false,
+                nowrap: false, 
+                url: '/Shipping/LoadView',
+                queryParams: { "rows": "30", "page": "1" },//status, int rows, int page
+                columns: [[
+                 { field: 'cks', checkbox: true, align: 'center', width: 10 },
+                 { title: '中文名称', field: 'ShippingName', align: 'center', width: 220, editor: "textbox" },
+                 { title: '英文名称', field: 'ShippingUSName', align: 'center', width: 220, editor: "textbox" },
+                 { title: '燃油费(元)', field: 'FuelCost', align: 'center', width: 80, editor: { numberbox: "0", max: "100000000", type: 'numberbox', options: { precision: 2} } },
+                 { title: '燃油费(折扣)', field: 'FuelDiscount', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 4 } } },
+                 { title: '折扣', field: 'Discount', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 4 } } },
+                 { title: '挂号费', field: 'AdditionalCost', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } } },
+                 { title: '运算方式', field: 'CalculateFormula', align: 'center', width: 80, editor: "textbox" }
+                ]],
+                toolbar: [{
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#hidID").val("0");
+                        $("#digShippingInfo").css("display", "block");
+                        $('#digShippingInfo').window({
+                            title: '添加货运',
+                            width: 460,
+                            height: 450,
+                            closed: false,
+                            cache: false,
+                            modal: true
+                        });
+                    }
+                }
+        //, {
+        //            text: '编辑',
+        //            iconCls: 'icon-edit',
+        //            handler: function () {
+        //                var rows = $('#tt').datagrid('getSelections');
+        //                if (rows.length == 0) {
+        //                    alert("请选择要编辑的产品");
+        //                    return;
+        //                }
+        //                if (rows.length > 1) {
+        //                    alert("只能对一个产品编辑");
+        //                    return;
+        //                }
+        //                $("#hidID").val(rows[0].ID);
+        //                $("#digShippingInfo").css("display", "block");
+        //                $('#digShippingInfo').window({
+        //                    title: rows[0].ShippingName + "-" + rows[0].ID,
+        //                    width: 460,
+        //                    height: 450,
+        //                    closed: false,
+        //                    cache: false,
+        //                    modal: true
+        //                });
+        //                var p = { "Field": "ID", "value": rows[0].ID }
+        //                $.get("/Shipping/LoadView", p, function (data) {
+        //                    var row = data.rows[0];
+        //                    $("#ShippingName").textbox("setValue", row.ShippingName);
+        //                    $("#ShippingUSName").textbox("setValue", row.ShippingUSName);
+        //                    $("#CalculateFormula").textbox("setValue", row.CalculateFormula);
+
+        //                    $("#AdditionalCost").textbox("setValue", row.AdditionalCost);
+        //                    $("#Discount").textbox("setValue", row.Discount);
+        //                    $("#FuelDiscount").textbox("setValue", row.FuelDiscount);
+        //                    $("#FuelCost").textbox("setValue", row.FuelCost);
+
+        //                })
+
+        //            }
+        //}
+        , {
+            text: '保存',
+            iconCls: 'icon-edit',
+            handler: acceptChanges
+        }, {
+            text: '撤销',
+            iconCls: 'icon-edit',
+            handler: rejectChanges
+        },
+                  {
+                      text: '删除',
+                      iconCls: 'icon-remove',
+                      handler: function () {
+                          $.messager.confirm('确认', '您确认想要删除记录吗？', function (r) {
+                              if (r) {
+                                  $.messager.alert('提示消息', '删除成功！！');
+                              }
+                          });
+                      }
+                  }],
+                onClickRow: onClickRow,
+                onAfterEdit: onAfterEdit
+            });
+        }
+
+        var Index = -1;
+        function onClickRow(rowIndex, rowData) {
+            if (Index != rowIndex && Index > -1) {
+                $("#tt").datagrid("endEdit", Index);
+            }
+            Index = rowIndex;
+            $("#tt").datagrid("beginEdit", rowIndex);
+        }
+
+        function acceptChanges() {
+            $("#tt").datagrid("acceptChanges");
+        }
+        function rejectChanges() {
+            $("#tt").datagrid("rejectChanges");
+        }
+
+        //完成编辑
+        function onAfterEdit(rowIndex, rowData, changes) {
+            if (jQuery.isEmptyObject(changes)) {
+                return;
+            } else {
+                $.post("/Shipping/Save", rowData, function (data) {
+                    if (data == "Ok") {
+                        Load();
+                        return;
+                    }
+                    $.messager.alert('消息提示', '操作失败。');
+                });
+            }
+        }
+
+
+        function ShippingSubmit() {
+            var param = {};
+            $("[txtfield]").each(function (index, element) {
+                param[$(element).attr("txtfield")] = $(element).textbox("getValue");
+            });
+            param["ID"] = $("#hidID").val();
+            $.post("/Shipping/Save", param, function (data) {
+                if (data == "Ok") {
+                    Load();
+                    $('#digShippingInfo').window("close");
+                    return;
+                }
+                $.messager.alert('消息提示', '操作失败。');
+            })
+        }
+
+        function Cancel() {
+            $('#digShippingInfo').window("close");
+        }
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',split:true,border:false" style="height: 100%;">
+            <div id="tb" style="padding: 2px 5px; height: 5%;margin-top:20px;">
+                <input class="easyui-textbox" style="width: 220px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search">查询</a>
+            </div>
+            <div style="height: 89%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+    </div>
+    <div id="digShippingInfo" style="display: none;">
+        <div style="width:400px;height:392px;padding:10px;margin:auto;">
+            <input type="hidden" id="hidID" value="" />
+            <div class="easyui-layout" data-options="fit: true">
+                <div data-options="region:'center'">
+                    <table id="ttShippingInfo" style="margin:auto;padding:10px;">
+                        <tr><td>英文名称：</td><td> <input class="easyui-textbox" style="width: 180px;" id="ShippingName" txtfield="ShippingName"></input></td></tr>
+                        <tr><td>中文名称：</td><td> <input class="easyui-textbox" style="width: 180px;" id="ShippingUSName" txtfield="ShippingUSName"></input></td></tr>
+                        <tr><td>燃油费(元)：</td><td> <input class="easyui-textbox" style="width: 180px;" id="FuelCost" txtfield="FuelCost"></input></td></tr>
+                        <tr><td>燃油费(折扣)：</td><td> <input class="easyui-textbox" style="width: 180px;" id="FuelDiscount" txtfield="FuelDiscount"></input></td></tr>
+                        <tr><td>折扣：</td><td> <input class="easyui-textbox" style="width: 180px;" id="Discount" txtfield="Discount"></input></td></tr>
+                        <tr><td>挂号费：</td><td> <input class="easyui-textbox" style="width: 180px;" id="AdditionalCost" txtfield="AdditionalCost"></input></td></tr>
+                        <tr><td>运算方式：</td><td> <input class="easyui-textbox" style="width: 180px;" id="CalculateFormula" txtfield="CalculateFormula"></input></td></tr>
+                        <tr><td colspan="2">   *类型1：计算首重，类型2：计算价格区间*</td></tr>
+                    </table>
+                </div>
+
+                <div data-options="region:'south'" style="text-align:right;height:40px;">
+                    <div style="margin:5px;">
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="ShippingSubmit()" style="width:80px;">Ok</a>
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="Cancel()" style="width: 80px; ">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+  
+</body>
+</html>

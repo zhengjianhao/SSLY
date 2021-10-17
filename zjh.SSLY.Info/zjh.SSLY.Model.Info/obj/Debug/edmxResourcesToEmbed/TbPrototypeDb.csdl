@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TbPrototypeDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+  <EntityType Name="TbProduct">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="binds" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="sale_props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="price" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="pic_url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="modified" Type="DateTime" Precision="3" />
+    <Property Name="product_prop_imgs" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="level" Type="Int32" />
+    <Property Name="pic_path" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="rate_num" Type="Int32" />
+    <Property Name="sale_num" Type="Int32" />
+    <Property Name="shop_price" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="standard_price" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="vertical_market" Type="Int32" />
+    <Property Name="customer_props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="property_alias" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="outer_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="created" Type="DateTime" Precision="3" />
+    <Property Name="tsc" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="cid" Type="Int32" />
+    <Property Name="cat_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="props" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="props_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="binds_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="sale_props_str" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+    <Property Name="collect_num" Type="Int32" />
+    <Property Name="product_imgs" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="product_extra_infos" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="sell_pt" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="cspu_feature" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="template_id" Type="Int32" />
+    <Property Name="commodity_id" Type="Int32" />
+    <Property Name="is_suite_effective" Type="Boolean" />
+    <Property Name="suite_items_str" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="barcode_str" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CreateTime" Type="DateTime" Precision="3" />
+    <Property Name="UID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TbProductExtraInfo">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="field_key" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="field_name" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="field_value" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CreateTime" Type="DateTime" Precision="3" />
+    <Property Name="UID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TbProductImg">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="pid" Type="Int32" />
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="position" Type="Int32" />
+    <Property Name="created" Type="DateTime" Precision="3" />
+    <Property Name="modified" Type="DateTime" Precision="3" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CreateTime" Type="DateTime" Precision="3" />
+    <Property Name="UID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TbProductPropImg">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="props" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="url" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+    <Property Name="position" Type="Int32" />
+    <Property Name="created" Type="DateTime" Precision="3" />
+    <Property Name="modified" Type="DateTime" Precision="3" />
+    <Property Name="ppid" Type="Int32" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CreateTime" Type="DateTime" Precision="3" />
+    <Property Name="UID" Type="Int32" />
+  </EntityType>
+  <EntityContainer Name="TbPrototypeDbEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="TbProduct" EntityType="Self.TbProduct" />
+    <EntitySet Name="TbProductExtraInfo" EntityType="Self.TbProductExtraInfo" />
+    <EntitySet Name="TbProductImg" EntityType="Self.TbProductImg" />
+    <EntitySet Name="TbProductPropImg" EntityType="Self.TbProductPropImg" />
+  </EntityContainer>
+</Schema>

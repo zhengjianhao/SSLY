@@ -1,0 +1,160 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+<link href="~/Content/jHtmlArea-0.8/style/jHtmlArea.css" rel="stylesheet" />
+<script src="~/Content/jHtmlArea-0.8/scripts/jHtmlArea-0.8.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#CategoryID').combotree('setValue', '@ViewBag.Model.CategoryID');
+        $("#SupplierID").combobox('setValue', '@ViewBag.Model.SupplierID');
+        //$("#CHNDes").htmlarea();
+        //$("#USDes").htmlarea();
+        $('#CHNDes').htmlarea('html', decodeURIComponent('@ViewBag.Model.CHNDes'));
+        $('#USDes').htmlarea('html', decodeURIComponent('@ViewBag.Model.USDes'));
+    });
+    function afterEdit() {
+        window.parent.aterUpdateEdit();
+    }
+
+    function SubmitForm() {
+        var parm = {};
+        parm["ID"] = $("#ProID").val();
+        $("[txtField]").each(function () {
+            var f = $(this).attr("txtfield");
+            var val = $(this).textbox("getValue");
+            parm[f] = val;
+        });
+
+        $("[cbbField]").each(function () {
+            var f = $(this).attr("cbbField");
+            var val = $(this).combobox("getValue");
+            parm[f] = val;
+        });
+
+        parm["CHNDes"] = encodeURIComponent($("#CHNDes").htmlarea('html'));
+        parm["USDes"] = encodeURIComponent($("#USDes").htmlarea('html'));
+
+        $.post("/Product/Save", parm, function (data) {
+            afterEdit();
+        });
+        //var cbbField = $("[cbbField]");
+    }
+</script>
+<form action="/" id="ff" method="post">
+    <div style="width: 980px; text-align: center; height: 100%; margin: 0px; padding-bottom: 45px;">
+        <input type="hidden" name="ProAttr" id="ProAttr" value="" />
+        <input type="hidden" name="ID" id="ProID" value="@ViewBag.Model.ID" />
+        <table style="padding: 10px 30px 0px 30px; width: 100%;">
+            <tr>
+                <td style="width: 20%; text-align: right;">产品名称</td>
+                <td colspan="3" style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Title'" style="width: 88%;" id="Title" type="text" txtField="Title">
+                    </input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">产品编号</td>
+                <td style="height: 35px; width: 30%;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.SKU',readonly:true" style="width: 180px;" id="SKU" txtField="SKU"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">商家编号</td>
+                <td style="height: 35px; width: 30%;">
+                    <input class="easyui-combobox" id="SupplierID" cbbField="SupplierID" style="width: 180px;" data-options="url:'/Supplier/LoadCombo'">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">款式编号</td>
+                <td style="height: 35px; width: 30%;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.ManufacturerCode'" style="width: 180px;" id="ManufacturerCode" txtField="ManufacturerCode"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">来源链接</td>
+                <td style="height: 35px; width: 30%;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Source'" style="width: 180px;" id="Source" txtField="Source"></input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">商品类别</td>
+                <td style="height: 35px;">
+                    <input class="easyui-combotree" id="CategoryID" cbbField="CategoryID" style="width: 180px;" data-options="url:'/ProductCategory/LoadTree?combo=combo',method:'get',required:true">
+                </td>
+                <td style="width: 20%; text-align: right;">销售价</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.SalePrice'" style="width: 180px;" id="SalePrice" txtField="SalePrice"></input>
+                </td>
+
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">运费</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.ShippingFee'" style="width: 180px;" id="ShippingFee" txtField="ShippingFee"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">成本</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Cost'" style="width: 180px;" id="Cost" txtField="Cost"></input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">毛重</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.GrossWeight'" style="width: 180px;" id="GrossWeight" txtField="GrossWeight"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">净重</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.NetWeight'" style="width: 180px;" id="NetWeight" txtField="NetWeight"></input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">颜色</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Color'" style="width: 180px;" id="Color" txtField="Color"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">尺码/规格</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.CodeNum'" style="width: 180px;" id="CodeNum" txtField="CodeNum"></input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">供销数量</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.GxQty'" style="width: 180px;" id="GxQty" txtField="GxQty"></input>
+                </td>
+
+                <td style="width: 20%; text-align: right;">备注</td>
+                <td style="height: 35px;">
+                    <input class="easyui-textbox" data-options="value:'@ViewBag.Model.Remark'" style="width: 180px;" id="Remark" txtField="Remark"></input>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">关键词</td>
+                <td colspan="3">
+                    <input class="easyui-textbox" data-options="multiline:true" value="@ViewBag.Model.Keywords" style="width:88%;height:50px" txtField="Keywords">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">英文描述</td>
+                <td colspan="3" style="padding-left:15px;">
+                    </br>  <textarea id="USDes" rows="10" name="USDes" style="width: 100%;height:400px;"></textarea>  </br>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 20%; text-align: right;">中文描述</td>
+
+                <td colspan="3" style="padding-left:15px;">
+                    <textarea id="CHNDes" rows="10" name="CHNDes" style="width: 100%;height:400px;"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="width: 100%; text-align: center; position: fixed; bottom: 0px; padding-top: 10px; background-color: #D4D4D4; height: 40px;">
+        <a id="btnOk" href="javascript:void(0)" onclick="javascript:SubmitForm()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+        <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+    </div>
+
+</form>

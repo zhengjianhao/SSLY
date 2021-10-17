@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7ca1bf7678e44e52a1abb485d7b1725f" Name="Diagram1" ZoomLevel="71">
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Document" Width="1.5" PointX="0.5" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.UserManage" Width="1.5" PointX="2.5" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.AnalysisKeywords" Width="1.5" PointX="0.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.HotAttribute" Width="1.5" PointX="8.375" PointY="0.5" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BuyersAccount" Width="1.5" PointX="8.375" PointY="3.375" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Page_Product" Width="1.5" PointX="6.375" PointY="0.5" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ProAttribute" Width="1.5" PointX="2.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.TbStore" Width="1.5" PointX="10.625" PointY="0.5" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.TbOrderDtl" Width="1.5" PointX="0.5" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Supplier" Width="1.5" PointX="4.5" PointY="0.5" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Pvuv" Width="1.5" PointX="4.125" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ProductCategory" Width="1.5" PointX="12.375" PointY="6.125" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillGoodsReceiptDtl" Width="1.5" PointX="14.125" PointY="6.125" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillGoodsReceiptHdr" Width="1.5" PointX="13.125" PointY="0.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.TbOrderHdr" Width="1.5" PointX="2.25" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ProjectMenu" Width="1.5" PointX="0.5" PointY="8.125" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.TbTraderates" Width="1.5" PointX="6.375" PointY="11.75" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.TbLogisticsCompanies" Width="1.5" PointX="8.125" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Product" Width="1.5" PointX="16" PointY="6.125" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillDeliveryDtl" Width="1.5" PointX="9.875" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillDeliveryHdr" Width="1.5" PointX="11.875" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillPurchaseDtl" Width="1.5" PointX="6.5" PointY="6.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillPurchaseHdr" Width="1.5" PointX="4.25" PointY="11.625" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillRefundGoodsHdr" Width="1.5" PointX="16.5" PointY="12.875" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ActionGroup" Width="1.5" PointX="15.375" PointY="1.75" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ActionInfo" Width="1.5" PointX="17.625" PointY="1.375" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Role" Width="1.5" PointX="19.875" PointY="1.875" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.UserInfo" Width="1.5" PointX="22.125" PointY="1" />
+        <AssociationConnector Association="BabySSLYInfoModel.FK_ActionGroupActionInfo" />
+        <AssociationConnector Association="BabySSLYInfoModel.ActionInfoRole" />
+        <AssociationConnector Association="BabySSLYInfoModel.RoleUserInfo" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.BillInStockDtl" Width="1.5" PointX="4.375" PointY="16.75" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.StockView" Width="1.5" PointX="9.375" PointY="7.75" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.Shipping" Width="1.5" PointX="6.375" PointY="17.5" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ShippingArea" Width="1.5" PointX="8.625" PointY="17" />
+        <AssociationConnector Association="BabySSLYInfoModel.FK_ShippingAreaShipping" />
+        <EntityTypeShape EntityType="BabySSLYInfoModel.ShippingCountry" Width="1.5" PointX="11.375" PointY="16.75" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

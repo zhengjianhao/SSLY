@@ -1,0 +1,218 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>物流方式</title>
+    <script type="text/javascript">
+        $(function () {
+            Load();
+        });
+        function Load() {
+            $('#tt').datagrid({
+                fit: true,
+                fitColumns: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                singleSelect: true,
+                rownumbers: true,
+                remoteSort: false,
+                nowrap: false,
+                url: '/ShippingArea/LoadView',
+                queryParams: { "rows": "30", "page": "1" },//status, int rows, int page
+                columns: [[
+                 { field: 'cks', checkbox: true, align: 'center', width: 10 },
+                 { title: 'ID', field: 'ID', hidden: true, align: 'center', width: 200 },
+                 { title: 'Shipping_ID', field: 'Shipping_ID', hidden: true, align: 'center', width: 200 },
+                { title: '物流方式', field: 'ShippingName', align: 'center', width: 200 },
+                   { title: '分区', field: 'Area', align: 'center', width: 100, editor: "textbox" },
+                  { title: '国家', field: 'CountryGroup', align: 'center', width: 400, editor: "textbox" },
+                { title: '价格', field: 'Price', align: 'center', width: 80, editor: "numberbox" },
+                 { title: '重量', field: 'Weight', align: 'center', width: 80, editor: "numberbox" },
+                 { title: '开始重量', field: 'FirstWeight', align: 'center', width: 80, editor: "numberbox" },
+                 { title: '结束重量', field: 'EndWeight', align: 'center', width: 80, editor: "numberbox" },
+                 { title: '结束价格', field: 'IntervalPirce', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } } },
+                 { title: '续重', field: 'ContinueWeight', align: 'center', width: 80, editor: "numberbox" },
+                 { title: '首重费用', field: 'FirstPrice', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } } },
+                 { title: '续重费用', field: 'ContinuePrice', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } } },
+                 //{ title: '挂号/附加费', field: 'AdditionalCost', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } }},
+                 //{ title: '燃油费', field: 'FuelCost', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 2 } } },
+                 //{ title: '折扣', field: 'Discount', align: 'center', width: 80, editor: { type: 'numberbox', options: { precision: 4 } }}
+                ]],
+                toolbar: [{
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#hidID").val("0");
+                        $("#digShippingAreaInfo").css("display", "block");
+                        $('#digShippingAreaInfo').window({
+                            title: '添加货运',
+                            width: 460,
+                            height: 450,
+                            closed: false,
+                            cache: false,
+                            modal: true
+                        });
+                    }
+                }
+                , {
+                    text: '保存',
+                    iconCls: 'icon-edit',
+                    handler: acceptChanges
+                }, {
+                    text: '撤销',
+                    iconCls: 'icon-edit',
+                    handler: rejectChanges
+                },
+                  {
+                      text: '删除',
+                      iconCls: 'icon-remove',
+                      handler: function () {
+                          $.messager.confirm('确认', '您确认想要删除记录吗？', function (r) {
+                              if (r) {
+                                  $.messager.alert('提示消息', '删除成功！！');
+                              }
+                          });
+                      }
+                  },
+                  {
+                      text: '物流表格导入',
+                      iconCls: 'icon-tool',
+                      handler: function () {
+                          $("#dlgImportShippingExecl").css("display", "block");
+                          $('#dlgImportShippingExecl').window({
+                              title: '物流表格导入',
+                              href: "/ShippingArea/ImportShippingExecl",
+                              width: 400,
+                              height: 280,
+                              closed: false,
+                              cache: false,
+                              modal: true
+                          });
+                      }
+                  }, {
+                      text: '国家匹配',
+                      iconCls: 'icon-tool',
+                      handler: function () {
+                          $.get("", "", function (data) {
+
+                          });
+                      }
+                  }],
+                onClickRow: onClickRow,
+                onAfterEdit: onAfterEdit
+            });
+        }
+
+        var Index = -1;
+        function onClickRow(rowIndex, rowData) {
+            if (Index != rowIndex && Index > -1) {
+                $("#tt").datagrid("endEdit", Index);
+            }
+            Index = rowIndex;
+            $("#tt").datagrid("beginEdit", rowIndex);
+        }
+
+        function acceptChanges() {
+            $("#tt").datagrid("acceptChanges");
+        }
+        function rejectChanges() {
+            $("#tt").datagrid("rejectChanges");
+        }
+
+        //完成编辑
+        function onAfterEdit(rowIndex, rowData, changes) {
+            if (jQuery.isEmptyObject(changes)) {
+                return;
+            } else {
+                $.post("/ShippingArea/Save", rowData, function (data) {
+                    if (data == "Ok") {
+                        Load();
+                        return;
+                    }
+                    $.messager.alert('消息提示', '操作失败。');
+                });
+            }
+        }
+
+
+        function ShippingSubmit() {
+            var param = {};
+            $("[txtfield]").each(function (index, element) {
+                param[$(element).attr("txtfield")] = $(element).textbox("getValue");
+            });
+            $("[cbbfield]").each(function (index, element) {
+                param[$(element).attr("cbbfield")] = $(element).combobox("getValue");
+            });
+
+
+            param["ID"] = $("#hidID").val();
+            $.post("/ShippingArea/Save", param, function (data) {
+                if (data == "Ok") {
+                    Load();
+                    return;
+                }
+                $.messager.alert('消息提示', '操作失败。');
+            })
+        }
+
+        function Cancel() {
+            $('#digShippingAreaInfo').window("close");
+        }
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',split:true,border:false" style="height: 100%;">
+            <div id="tb" style="padding: 2px 5px; height: 5%;margin-top:20px;">
+                <input class="easyui-textbox" style="width: 220px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search">查询</a>
+            </div>
+            <div style="height: 89%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+    </div>
+    <div id="digShippingAreaInfo" style="display: none;">
+        <div style="width:400px;height:390px;padding:10px;margin:auto;">
+            <input type="hidden" id="hidID" value="" />
+            <div class="easyui-layout" data-options="fit: true">
+                <div data-options="region:'center'">
+                    <table id="ttShippingAreaInfo" style="margin:auto;padding:10px;">
+                        <tr><td>物流方式：</td><td><input class="easyui-combobox" id="ShippingName" cbbfield="Shipping_ID" style="width: 180px;" data-options="url:'/Shipping/LoadCombo'"></td></tr>
+                        <tr><td>分区：</td><td> <input class="easyui-textbox" style="width: 180px;" id="Area" txtfield="Area"></input></td></tr>
+                        <tr><td>国家：</td><td> <input class="easyui-textbox" style="width: 180px;" id="CountryGroup" txtfield="CountryGroup"></input></td></tr>
+                        <tr><td>开始重量：</td><td> <input class="easyui-numberbox" data-options="min:0" style="width: 180px;" id="FirstWeight" txtfield="FirstWeight"></input></td></tr>
+                        <tr><td>结束重量：</td><td> <input class="easyui-numberbox" data-options="min:0" style="width: 180px;" id="EndWeight" txtfield="EndWeight"></input></td></tr>
+                        <tr><td>结束价格：</td><td> <input class="easyui-numberbox" data-options="min:0,precision:2" style="width: 180px;" id="IntervalPirce" txtfield="IntervalPirce"></input></td></tr>
+                        <tr><td>首重费用：</td><td> <input class="easyui-numberbox" data-options="min:0,precision:2" style="width: 180px;" id="FirstPrice" txtfield="FirstPrice"></input></td></tr>
+                        <tr><td>续重：</td><td> <input class="easyui-numberbox" data-options="min:0" style="width: 180px;" id="ContinueWeight" txtfield="ContinueWeight"></input></td></tr>
+                        <tr><td>续重费用：</td><td> <input class="easyui-numberbox" data-options="min:0,precision:2" style="width: 180px;" id="ContinuePrice" txtfield="ContinuePrice"></input></td></tr>
+                        @*<tr><td>挂号(附加)费：</td><td> <input class="easyui-numberbox" style="width: 180px;" id="AdditionalCost" txtfield="AdditionalCost"></input></td></tr>
+                            <tr><td>燃油费：</td><td> <input class="easyui-numberbox" style="width: 180px;" id="FuelCost" txtfield="FuelCost"></input></td></tr>
+                            <tr><td>折扣：</td><td> <input class="easyui-numberbox" style="width: 180px;" id="Discount" txtfield="Discount"></input></td></tr>*@
+
+                    </table>
+                    *计算方式字段：首重，续重，首重费用，续重费用，续重费用，附加费，燃油费，物流名称，编号*
+                </div>
+
+                <div data-options="region:'south'" style="text-align:right;height:40px;">
+                    <div style="margin:5px;">
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)" onclick="ShippingSubmit()" style="width:80px;">Ok</a>
+                        <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="Cancel()" style="width: 80px; ">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="dlgImportShippingExecl" style="display:none;">
+
+    </div>
+</body>
+</html>

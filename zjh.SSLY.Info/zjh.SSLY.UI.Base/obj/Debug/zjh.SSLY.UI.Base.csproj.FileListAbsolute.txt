@@ -1,0 +1,8 @@
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\bin\Debug\zjh.SSLY.UI.Base.dll
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\bin\Debug\zjh.SSLY.UI.Base.pdb
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\obj\Debug\zjh.SSLY.UI.Base.BaseForm.resources
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\obj\Debug\zjh.SSLY.UI.Base.csproj.GenerateResource.Cache
+D:\开发项目\zjh.SSLY.Info\Library\zjh.SSLY.UI.Base.dll
+D:\开发项目\zjh.SSLY.Info\Library\zjh.SSLY.UI.Base.pdb
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\obj\Debug\zjh.SSLY.UI.Base.dll
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.UI.Base\obj\Debug\zjh.SSLY.UI.Base.pdb

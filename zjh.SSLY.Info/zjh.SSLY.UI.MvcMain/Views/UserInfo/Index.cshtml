@@ -1,0 +1,267 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>用户信息</title>
+    <style type="text/css">
+        #Image_Left {
+            width: 540px;
+            float: left;
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 420px;
+            overflow: scroll;
+        }
+
+        #Image_Right {
+            width: 420px;
+            float: left;
+            height: 420px;
+            border-left: 2px dashed #95B8E7;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0px;
+        }
+    </style>
+
+
+    <script type="text/javascript">
+        $(function () {
+            initDataGrid({ page: "1" });
+        });
+        var isFist = false;
+        var rowID = 0;
+        function initDataGrid(params) {
+            $('#tt').datagrid({
+                url: '/UserInfo/LoadView',
+                striped: true,
+                remoteSort: false,
+                fit: true,
+                pagination: true,
+                fitColumns: true,
+                nowrap: false,
+                pageList: [30, 50, 100],
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: params,
+                columns: [[
+						//{ title: 'ck', checkbox: true, width: 50 },
+                        { title: 'ID', checkbox: true, hidden: true,  width: 50 },
+                        { title: '用户', field: 'UName', align: 'center', width: 200 },
+                        { title: '编号', field: 'UCode', align: 'center', width: 200 },
+                        { title: '邮箱', field: 'Email', width: 130, align: 'center' },
+                        { title: '手机', field: 'Phone', width: 130, align: 'center' },
+                        {
+                            title: '角色', field: 'Role', width: 130, align: 'center',
+                            formatter: function (value, row, index) {
+                                var roles = "";
+                                for (var i = 0; i < row.length; i++) {
+                                    roles += roles.Rname;
+                                    if (i != row.length) {
+                                        roles + ","
+                                    }
+                                }
+                                return roles;
+                            }
+                        },
+                        { title: '角色2', field: 'Role', width: 130, align: 'center' },
+                        { title: '描述', field: 'cz', width: 120, align: 'center' }
+                ]],
+                toolbar: [{
+                    id: 'btnDownShelf',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#divUserInfoAdd").css("display", "block");
+                        $("#divUserInfoAdd").dialog({
+                            width: 500,
+                            height: 300,
+                            title: "添加",
+                            modal: true,
+                            buttons: [{
+                                text: 'Ok',
+                                iconCls: 'icon-ok',
+                                handler: function () {
+                                    $('#ff').form('submit', {
+                                        url: "/UserInfo/Save",
+                                        success: function (data) {
+                                            alert(data)
+                                        }
+                                    });
+                                }
+                            }, {
+                                text: 'Cancel',
+                                handler: function () {
+                                }
+                            }]
+                        });
+
+
+                    }
+                }, {
+                    id: 'btnUpdate',
+                    text: '修改产品',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $("#divUserInfoEdit").css("display", "block");
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (rows.length == 0) {
+                            alert("请选择要编辑的产品");
+                            return;
+                        }
+                        if (rows.length > 1) {
+                            alert("只能对一个产品编辑");
+                            return;
+                        }
+                        $("#divUserInfoEdit").window({
+                            width: 900,
+                            height: 500,
+                            fit: false,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            title: "产品编辑"
+                        });
+                        $("#ifrExit").attr("src", "/UserInfo/Edit?copy=false&id=" + rows[0].ID);
+                        $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                    }
+                }, {
+                    id: 'btnUpdate',
+                    text: '复制',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $("#divUserInfoEdit").css("display", "block");
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (rows.length == 0) {
+                            alert("请选择要编辑的产品");
+                            return;
+                        }
+                        if (rows.length > 1) {
+                            alert("只能对一个产品编辑");
+                            return;
+                        }
+                        $("#divUserInfoEdit").window({
+                            width: 900,
+                            height: 500,
+                            fit: false,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            title: "产品编辑"
+                        });
+                        $("#ifrExit").attr("src", "/UserInfo/Edit?copy=true&id=" + rows[0].ID);
+                        $("#ifrFileEdit").attr("src", "FileResource/FileIndex?SKU=" + rows[0].SKU);
+                    }
+                }, {
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-image_Delete',
+                    handler: function () {
+                        var rows = $('#tt').datagrid('getSelections');
+                        var ids = "";
+                        for (var i = 0; i < rows.length; i++) {
+                            ids += rows[i].ID + ",";
+                        }
+                        $.messager.confirm("消息", "是否需要删除这条记录！", function (b) {
+                            if (b) {
+                                $.get("/UserInfo/Delete", "ids=" + ids, function (data) {
+                                    if (data == "Ok") {
+                                        $.messager.alert("消息", "删除完成！");
+                                        initDataGrid({});
+                                    } else {
+                                        $.messager.alert("消息", "删除失败！");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }],
+                //onClickRow: function (rowIndex, rowData) {
+                //    $("#ZImage").attr("src", rowData.ZImage);
+                //    var p = { sku: rowData.SKU };
+                //    LoadDetails(p);
+                //},
+                onHeaderContextMenu: function (e, field) {
+                }
+            });
+        }
+
+
+
+        function Search() {
+            var sTime = $("#starkTime").datetimebox("getValue");
+            var eTime = $("#endTime").datetimebox("getValue");
+            var cc = $('#cc').combobox('getValue');
+            var txtField = $("#txtField").textbox("getValue");
+            var p = { "starkTime": sTime, "endTime": eTime, "Field": cc, "value": txtField };
+            initDataGrid(p);
+        }
+
+        function aterUpdateEdit() {
+            var displayE = $('#divUserInfoEdit').css("display");
+            var displayA = $('#divUserInfoAdd').css("display");
+            if (displayE != "none") {
+                $('#divUserInfoEdit').dialog("close");
+            }
+            if (displayA != "none") {
+                $('#divUserInfoAdd').dialog("close");
+            }
+            initDataGrid();
+        }
+
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',border:false" style="height: 100%;">
+            <div id="tbs" style="padding: 2px 5px; height: 6%;">
+                创建时间:
+                <input class="easyui-datebox" id="starkTime" style="width: 110px;">
+                To:
+                <input class="easyui-datebox" id="endTime" style="width: 110px">
+                <select id="cc" class="easyui-combobox" name="dept" style="width: 80px;">
+                    <option value="SKU">编号</option>
+                    <option value="Title">产品名称</option>
+                    <option value="SupplierID">供销商</option>
+                    <option value="Uid">创建人</option>
+                    <option value="Remark">备注</option>
+                </select>
+                <input class="easyui-textbox" style="width: 130px;" id="txtField"><a href="#" style="text-decoration: none;"> 更多</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Search()">查询</a>
+            </div>
+            <div style="height: 93%;">
+                <table id="tt"></table>
+            </div>
+        </div>
+    </div>
+
+    <div id="divUserInfoEdit" style="display: none; border: 0px;">
+        <table>
+            <tr><td>用户</td><td><input class="easyui-textbox" style="width:200px"></td><td>密码</td><td><input class="easyui-textbox" style="width: 200px"></td></tr>
+            <tr><td>Email</td><td></td><td>Phone</td><td></td></tr>
+            <tr><td>Remark</td><td></td><td>Role</td><td></td></tr>
+        </table>
+    </div>
+
+
+    <div id="divUserInfoAdd" style="display: none;">
+        <form id="ff" method="get">
+            <table>
+                <tr><td>用户</td><td><input class="easyui-textbox" name="UName" style="width:180px"></td><td>用户编号</td><td><input name="UCode" class="easyui-textbox" style="width: 180px"></td></tr>
+                <tr><td>密码</td><td><input name="UserPwd" class="easyui-textbox" style="width: 180px"></td><td>邮箱</td><td><input class="easyui-textbox" name="Email" style="width:180px"></td></tr>
+                <tr><td>手机</td><td colspan="3"><input name="Phone" class="easyui-textbox" style="width:180px"></td></tr>
+                <tr> <td>角色</td><td colspan="3"><input name="Role" class="easyui-textbox" style="width:180px"></td></tr>
+                <tr><td>描述</td><td><input class="easyui-textbox" name="Remark" style="width:180px"></td></tr>
+            </table>
+        </form>
+    </div>
+
+</body>
+</html>

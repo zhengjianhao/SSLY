@@ -1,0 +1,475 @@
+﻿@{
+    Layout = null;
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>淘宝订单列表</title>
+    <script type="text/javascript">
+        var  param = {
+            "Field": "Flag",
+            "value": "刷单"};
+        $(function () {
+            Load(param);
+            var Field = $("#cbField").combobox("getValue");
+            var value = $("#txtFieldValue").textbox("getValue");
+        });
+        function Load(param) {
+            param["OrderStatus"] = @ViewBag.Status;
+            param["rows"] = "30";
+            param["page"] = "1";
+            $('#tt').datagrid({
+                remoteSort: false,
+                fitColumns: true,
+                fit: true,
+                pagination: true,
+                pageList: [30, 50, 100],
+                nowrap: false,
+                url: '/TbOrders/LoadView',
+                queryParams:param,//status, int rows, int page
+                columns: [[
+                 { field: 'cks', checkbox: true, align: 'center', width: 50 },
+                 { title: '编号', field: 'Formno', align: 'center', width: 120 },
+                 { title: '订单号', field: 'OrderId', align: 'center', width: 150 },
+                 { title: '状态', field: 'OrderStatus', align: 'center', width: 100,
+                     formatter: function (value, row, index) {
+                         switch (value) {
+                             case 0:
+                                 return "未付款";
+                             case 50:
+                                 return "待发货";
+                             case 100:
+                                 return "已发货";
+                             case 110:
+                                 return "退货";
+                         }
+                         return value;
+                     }
+                 },
+                 { title: '类型', field: 'Flag', align: 'center', width: 90 },
+                 { title: '客户端', field: 'TradeFrom', align: 'center', width: 90 ,
+                     formatter: function (value, row, index) {
+                         if (value=="手机订单") {
+                             return "手机";
+                         } else {
+                             return "电脑";
+                         }
+                     }
+                 },
+                 { title: '实收款', field: 'Payment', align: 'center', width: 80 },
+                 { title: '买家旺旺', field: 'BuyerNick', align: 'center', width: 120 },
+                   { title: '收件人', field: 'ReceiverName', align: 'center', width: 120 },
+                 {
+                     title: '地址', field: 'ck', align: 'center', width: 280,
+                     formatter: function (value, row, index) {
+                         return row.ReceiverState + "  " + row.ReceiverCity + "  " + row.ReceiverDistrict;
+                     }
+                 },
+                 {
+                     title: '付款时间', field: 'PayTime', align: 'center', width: 180,
+                     formatter: function (value, row, index) {
+                         return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                     }
+                 },
+                   { title: '帐号', field: 'Account', align: 'center', width: 120 },
+                {
+                    title: '操作', field: 'czz', align: 'center', width: 180,
+                    formatter: function (value, row, index) {
+                        var cz = "";
+                        switch (row.OrderStatus) {
+                            case 50:
+                                cz += "<a href='javascript:void(0)'  style='text-decoration:none;' onclick='DeliverGoods(\"" + row.Formno + "\")'>[发货]</a>";
+                                cz +=  "<a href='javascript:void(0)' style='text-decoration:none;' onclick='Eidt(\"" + row.Formno + "\",\"" + row.Flag + "\")'>[编辑]</a>";
+                                break;
+                        }
+                        return cz;
+                    }
+                }
+                ]],
+                toolbar: [{
+                    text: '订单加载',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $("#dig").css("display", "block");
+                        $('#dig').window({
+                            title: '订单加载',
+                            width: 440,
+                            height: 360,
+                            closed: false,
+                            cache: false,
+                            modal: true,
+                            footer: '#ft'
+                        });
+                    }
+                },{
+                    text: '打印',
+                    iconCls: 'icon-print',
+                    handler: function () {
+                        var rows= $("#tt").datagrid("getChecked");
+                        var formnos="";
+                        if (rows.length==0) {
+                            return;
+                        }
+                        for (var i = 0; i < rows.length; i++) {
+                            formnos +=  rows[i].Formno;
+                            if (i!=rows.length-1) {
+                                formnos+=",";
+                            }
+                        }
+                        window.open("/TbOrders/Print?formnos="+formnos);
+                    }
+                } ],
+                onClickRow: function (rowIndex, rowData) {
+                    //$("#ZImage").attr("src", rowData.ZImage);
+                    var p = { "formno": rowData.Formno };
+                    SetOrderInfo(rowData);
+                    LoadDetails(p);
+                    //ReceiverState+ReceiverDistrict+ReceiverDistrict+ReceiverAddress
+                },
+                onLoadSuccess: function (data) {
+                    $("#spanPrice").text("总金额：" + data.price);
+                }
+            });
+        }
+
+        //赋值订单信息
+        function SetOrderInfo(order) {
+            $("[spanField]").each(function (i,e) {
+                if ($(this).attr("spanField")=="spanBuyersInfo") {
+                    $(this).text(order.BuyerNick+"  "+ order.ReceiverName+" "+ order.ReceiverState+" "+order.ReceiverCity+" "+order.ReceiverDistrict+" "+order.ReceiverAddress);
+                }else {
+                    $(this).text(order[$(this).attr("spanField").replace("span","")]);
+                }
+            });
+        }
+
+        //发货
+        function DeliverGoods(formno) {
+            $.messager.confirm('Confirm', '是否发货？', function (r) {
+                if (r) {
+                    $.get("/TbOrders/DeliverGoods", "formno=" + formno, function (data) {
+                        $.messager.show({
+                            title: '提示',
+                            msg: data.msg,
+                            timeout: 2500,
+                            showType: 'slide'
+                        });
+                        Sreach();
+                    });
+                }
+            });
+        }
+
+        function Eidt(formno, flag) {
+            $("#dlgEidt").css("display", "block");
+            $("#selFlag").combobox("setValue", flag);
+            $("#txtFormno").textbox("setValue", formno);
+            $("#dlgEidt").dialog({
+                title: '编辑',
+                width: 400,
+                height: 200,
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    text: '保存',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        flag = $("#selFlag").combobox("getValue");
+                        $.get("/TbOrders/EidtBill", "formno=" + formno + "&flag=" + flag, function (data) {
+                            //Load(param);
+                            $("#dlgEidt").dialog("close");
+
+                        });
+                    }
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        $("#dlgEidt").dialog("close");
+                    }
+                }]
+            });
+        }
+
+        function LoadDetails(param) {
+
+            $('#ttDeltail').datagrid({
+                url: '/TbOrders/LoadDtl',
+                striped: true,
+                remoteSort: false,
+                nowrap: false,
+                singleSelect: true,
+                rownumbers: true,
+                queryParams: param,
+                columns: [[
+                          {
+                              title: '宝贝图片', field: 'MainImage', align: 'center', width: 100,
+                              formatter: function (value, row, index) {
+                                  var zImage = "<img src='" + value + "' style='width:100px;'/>";
+                                  return zImage;
+                              }
+                          },
+                          {
+                              title: '名称/属性/商家编码', field: 'Title', align: 'left', width: 350,
+                              formatter: function (value, row, index) {
+                                  var _r = row.Title + "</br>";
+                                  _r += "颜色分类：" + row.Color + "</br>";
+                                  _r += "编码" + row.SKU;
+                                  return _r;
+                              }
+                          },
+                          { title: '单价', field: 'Price', align: 'center', width: 80 },
+                          { title: '数量', field: 'Qty', align: 'center', width: 80 },
+                          { title: '剩余', field: 'Leave', align: 'center', width: 80 },
+                          { title: '实收', field: 'Price', align: 'center', width: 80 }
+                ]]
+            });
+        }
+
+        function SynOrder() {
+            var Status = $("#ccStatus").combobox("getValue");
+            var Account = $("#ccAccount").combobox("getValue");
+            $.get("/TbOrders/DownloadOrders", { "Status": Status, "Account": Account }, function (data) {
+                $.messager.alert('信息提示', data);
+                alert(message);
+            });
+        }
+
+        function Sreach() {
+            var starkPayTimeTime = $("#sPayTime").datetimebox("getValue");
+            var endPayTimeTime = $("#ePayTime").datetimebox("getValue");
+            var Field = $("#cbField").combobox("getValue");
+            var value = $("#txtFieldValue").textbox("getValue");
+            var pram = {
+                "starkPayTimeTime": starkPayTimeTime,
+                "endPayTimeTime": endPayTimeTime,
+                "Field": Field,
+                "value": value,
+            };
+            Load(pram);
+        }
+    </script>
+    <style type="text/css">
+        .searchLeftTd {
+            /* border: 1px solid #D4D4D4; */
+            width: 150px;
+            text-align: right; 
+         
+        }
+
+        .searchRightTd {
+            padding-left: 20px;
+           /* border: 1px solid #D4D4D4; */
+            width: 310px;
+        }
+    </style>
+</head>
+<body style="margin: 0px; padding: 10px;">
+    <div class="easyui-layout" data-options="fit:true">
+        <div data-options="region:'north',split:true,border:false" style="height: 8%;">
+            <div id="p" class="easyui-panel" data-options="fit:true" >
+                <table style=" border-collapse: collapse; margin: auto; padding: 0;width:100%; height: 100%;">
+                    <tr>    
+                        <td class="searchRightTd">付款时间:
+                            <input class="easyui-datetimebox" style="width: 140px;" id="sPayTime">To:<input class="easyui-datetimebox" style="width: 140px;" id="ePayTime"> 
+                 &nbsp;
+                            <select class="easyui-combobox" name="cbField" id="cbField" style="width: 100px;" id="ePayTime">
+                                <option value="Flag">订单类型</option>
+                                <option value="BuyerNick">昵称</option>
+                                <option value="Status">交易状态</option>
+                                <option value="OrderId">交易号</option>
+                                <option value="Formno">编号</option>
+                                <option value="Account">帐号</option>
+                                <option value="ReceiverName">收件人</option>
+                                <option value="ReceiverInfo">地址信息</option>
+                                <option value="ReceiverPhone">手机/电话</option>
+                                <option value="TrackingNo">物流单号</option>
+                                <option value="AlipayAccount">支付宝</option>
+                                <option value="Uid">Uid</option>
+                            </select> 
+                     
+                            <input class="easyui-textbox" data-options="value:'刷单'" style="width: 140px;" id="txtFieldValue" />&nbsp;&nbsp;
+                                      <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-search" onclick="Sreach()">查询</a>
+                            <span id="spanPrice" style="color: red; margin:auto;padding-left: 20px;position: absolute;font-size:25px;"></span>
+
+                        </td> 
+                    </tr>
+               
+                </table>
+                    
+    
+            </div>
+        </div>
+        <div data-options="region:'center',border:false" style="height: 70%;">
+            <table id="tt"></table>
+        </div>
+        <div data-options="region:'south',split:true,border:false" style="height: 25%;">
+            <div class="easyui-tabs" data-options="fit:true">
+                <div title="交易概览" style="padding-top: 3px;">
+                    <span spanfield="spanBuyersInfo"></span>
+                    <table id="ttDeltail"></table>
+                    共1单, 1件(未计赠品)   实收56.00元(含快递：0.00)
+                </div>
+                <div title="订单详情" style="padding-top: 3px;">
+                    <table>
+                        <tr>
+                            <td>订单编号：</td>
+                            <td><span spanfield="OrderId"></span></td>
+                            <td>交易类型：</td>
+                            <td><span spanfield="">一口价</span></td>
+                            <td>交易内部来源：</td>
+                            <td><span spanfield="TradeFrom">手机,手机</span></td>
+                        </tr>
+                        <tr>
+                            <td>交易状态：</td>
+                            <td><span spanfield="OrderStatus">交易成功</span></td>
+                            <td>评价状态：</td>
+                            <td><span spanfield="">已评价</span></td>
+                            <td>信用卡支付：</td>
+                            <td><span spanfield="">(买家没有使用信用卡支付)</span></td>
+                        </tr>
+                        <tr>
+                            <td>买家昵称：</td>
+                            <td><span spanfield="">yy997536282</span></td>
+                            <td>买家支付宝：</td>
+                            <td><span spanfield="AlipayAccount">997536282@qq.com</span></td>
+                            <td>支付宝交易号：</td>
+                            <td><span spanfield="BuyerNick"></span></td>
+                        </tr>
+                        <tr>
+                            <td>成交时间：</td>
+                            <td><span spanfield="PayTime">2015-08-10 17:13:01</span></td>
+                            <td>付款时间：</td>
+                            <td><span spanfield="PayTime">2015-08-10 17:13:05</span></td>
+                            <td>确认时间：</td>
+                            <td><span spanfield="">2015-08-13 20:20:31</span></td>
+                        </tr>
+                        <tr>
+                            <td>发票抬头：</td>
+                            <td><span spanfield="">2015-08-10 17:13:01</span></td>
+                            <td>货到付款费用：</td>
+                            <td><span spanfield=""></span>>0.00</span></td>
+                            <td>买家运费险：</td>
+                            <td><span spanfield="">（无）</span></td>
+                        </tr>
+                        <tr>
+                            <td>买家使用积分：</td>
+                            <td><span spanfield="">2015-08-10 17:13:01</span></td>
+                            <td>实际使用积分：</td>
+                            <td><span spanfield="">0.00</span></td>
+                            <td>买家获得积分：</td>
+                            <td><span spanfield="">（无）</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div title="物流信息" style="padding-top: 3px;">
+                    <table>
+                        <tr>
+                            <td>物流编号：	</td>
+                            <td>LP00038952847996</td>
+                            <td>发货时间：</td>
+                            <td>2015-08-10 19:09:14</td>
+                        </tr>
+                        <tr>
+                            <td>物流公司：	</td>
+                            <td>申通快递</td>
+                            <td>运单号码：</td>
+                            <td>229322772209</td>
+                        </tr>
+                        <tr>
+                            <td>物流动态：	</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td colspan="3">
+                                <input class="easyui-textbox" data-options="multiline:true" style="width: 300px; height: 200px;"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div title="评价信息" style="padding-top: 3px;">
+                    @*<ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dig" style="display: none;">
+        <table style="margin-left: auto; margin-right: auto; padding: 20px;">
+            <tr>
+                <td>选择店铺:
+                    <select id="ccAccount" class="easyui-combobox" name="dept" style="width: 120px;">
+                        <option value="卉158876571">卉158876571</option>
+                        <option value="hao坏坏">hao坏坏</option>
+                    </select>
+                </td>
+                <td>选择状态:
+                    <select id="ccStatus" class="easyui-combobox" name="dept" style="width: 120px;">
+                        <option value="">所有</option>
+                        <option value="WAIT_SELLER_SEND_GOODS">等待发货</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">创建时间:
+                    <input class="easyui-datebox" style="width: 120px">To:<input class="easyui-datebox" style="width: 120px">
+                    <div style="margin-left: auto; margin-right: auto; padding: 10px; width: 360px;"><a href="javascript:void(0)" style="float: right; margin-right: 0px;" class="easyui-linkbutton" onclick="SynOrder()" iconcls="icon-search">加载</a></div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></br></td>
+            </tr>
+            <tr>
+                <td>
+                    <form action="/TbOrders/ImportOrderByCsv" method="post" enctype="multipart/form-data">
+                        <input id="fb" name="filedata" class="easyui-filebox" style="width: 250px" data-options="prompt:'Choose a file...'">
+                    </form>
+                </td>
+                <td>
+                    <input type="submit" name="name" value="确认上传" style="width: 80px; float: right;" /></td>
+            </tr>
+
+        </table>
+    </div>
+    <a href="javascript:void(0)" id="mb" iconcls="icon-edit">Edit</a>
+    <div id="mm" style="width: 150px;">
+        <div iconcls="icon-undo">Undo</div>
+        <div iconcls="icon-redo">Redo</div>
+        <div class="menu-sep"></div>
+        <div>Cut</div>
+        <div>Copy</div>
+        <div>Paste</div>
+        <div class="menu-sep"></div>
+        <div iconcls="icon-remove">Delete</div>
+        <div>Select All</div>
+    </div>
+
+    <div id="dlgEidt" style="display: none;">
+        <table>
+            <tr>
+                <td>编号：</td>
+                <td>
+                    <input class="easyui-textbox" id="txtFormno" data-options="readonly:true" style="width: 120px;">
+                </td>
+                <td>类型：</td>
+                <td>
+                    <select id="selFlag" class="easyui-combobox" name="state" style="width: 120px;">
+                        <option value="普通">普通</option>
+                        <option value="刷单">刷单</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+</body>
+</html>

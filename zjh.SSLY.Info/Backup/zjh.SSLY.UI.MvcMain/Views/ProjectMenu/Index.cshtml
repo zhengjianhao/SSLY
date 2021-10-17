@@ -1,0 +1,187 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<script src="~/Controls/UserControls.js"></script>
+<style type="text/css">
+
+</style>
+<script type="text/javascript">
+    $(function () {
+        GetTree();
+
+
+
+        //$('#pp1').tooltip({
+        //    position: 'top',
+        //    content: '<img src="http://10.0.0.252:810/data/productwaterImg/201308/watermark_img/2013814103527484285548.jpg"  style="width:150px;height:150px;"/>',
+        //    onShow: function () {
+        //        $(this).tooltip('tip').css({
+        //            backgroundColor: '#666',
+        //            borderColor: '#666'
+        //        });
+        //    }
+        //});
+        //$('#pp2').tooltip({
+        //    position: 'bottom',
+        //    content: '<div style="padding:5px;background:#eee;color:#000">This is the tooltip message.</div>',
+        //    onShow: function () {
+        //        $(this).tooltip('tip').css({
+        //            backgroundColor: '#fff000',
+        //            borderColor: '#ff0000',
+        //            boxShadow: '1px 1px 3px #292929'
+        //        });
+        //    },
+        //    onPosition: function () {
+        //        $(this).tooltip('tip').css('left', $(this).offset().left);
+        //        $(this).tooltip('arrow').css('left', 20);
+        //    }
+        //});
+    });
+    function GetTree() {
+        $('#tt').treegrid({
+            url: '/ProjectMenu/LoadTree',
+            idField: 'id',
+            fit: true,
+            treeField: 'text',
+            columns: [[
+                { field: 'text', title: '名称', width: 280, align: 'left' },
+                { field: 'id', hidden: true, width: 280, align: 'center' },
+                {
+                    field: 'Link', title: '链接', width: 400, align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a id="link' + row.id + '" >' + value + '</a>';
+                    }
+                },
+                { field: 'Sort', title: '排序', width: 280, align: 'center' },
+                {
+                    field: 'ck', title: '操作', width: 280, align: 'center',
+                    formatter: function (value, row, index) {
+                        return "<a style='text-decoration:none;color: #652EF3;border: 1px solid  #652EF3;' href='javascript:void(0)' onclick='Eixt(" + row.id + "," + row.Fid + ",\"" + row.text + "\"," + row.Sort + ",\"" + row.Link + "\")'>&nbsp;编辑&nbsp;</a> &nbsp;<a style='text-decoration:none;color: #652EF3;border: 1px solid  #652EF3;' href='javascript:void(0)'>&nbsp;移除&nbsp;</a>";
+                    }
+                }
+            ]],
+            onLoadSuccess: function (row, data) {
+                $(data).each(function (index, element) {
+                    $("#link" + element.id).tooltip({
+                        position: 'top',
+                        content: '<img src="http://10.0.0.252:810/data/productwaterImg/201308/watermark_img/2013814103527484285548.jpg"  style="width:150px;height:150px;"/><img src="http://10.0.0.252:810/data/productwaterImg/201308/watermark_img/2013814103527484285548.jpg"  style="width:150px;height:150px;"/>'
+                    });
+                });
+            }
+        });
+    }
+
+    function execute() {
+        var ids = getCheckeds("CategoryTree");
+    }
+    function Add() {
+        $("#divCategory").css("display", "block");
+        $("#cc").combotree("setValue", 0);
+        $("#hiddID").val(0);
+        $('#divCategory').dialog({
+            title: "新增",
+            width: 350,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true
+        });
+        //var p = { Url: "/ProjectMenu/LoadTree", idField: "id", treeField: "text", title: "分类", tree: "CategoryTree", div: "ddTree", checkbox: false };
+        //OpenTreeDialog(p);
+    }
+    function Eixt(id, Fid, text, sort, Link) {
+        $("#hiddID").val(id);
+        $("#divCategory").css("display", "block");
+        $('#divCategory').dialog({
+            title: "编辑",
+            width: 350,
+            height: 400,
+            closed: false,
+            cache: false,
+            modal: true
+        });
+        $("#Link").textbox("setValue", Link);
+        $("#cc").combotree("setValue", Fid);
+        $("#Node").textbox("setText", text);
+        $("#Sort").textbox("setText", sort);
+    }
+    function SubmitForm() {
+        var p = { "Link": $("#Link").textbox("getText"), "Node": $("#Node").textbox("getText"), "Sort": $("#Sort").textbox("getText"), "FID": $("#cc").combotree("getValue"), "ID": $("#hiddID").val() };
+        $.get("/ProjectMenu/Save", p, function (data) {
+            $('#divCategory').dialog("close");
+            GetTree();
+        });
+    }
+</script>
+
+<a id="btnOk" href="javascript:void(0)" onclick="Add()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">添加</a>
+<table id="tt" style="width:600px;height:400px"></table>
+<div id="ddTree" style="display:none;">
+    <table id="CategoryTree"></table>
+    <div style="width: 96%; text-align: center; position: absolute; bottom: 5px; right: 5px; padding-top: 5px; padding-bottom: 10px; background-color: #D4D4D4; height: 20px; ">
+        <a id="btnOk" href="javascript:void(0)" onclick="execute()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+        <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+    </div>
+</div>
+<div id="divCategory" style="display:none;">
+    <form action="/" id="ff" method="post">
+        <input type="hidden" name="ID" id="hiddID" value="0" />
+        <table width="90%" style="padding-top:20px;" align="center" id="general-table">
+            <tbody>
+                <tr>
+                    <td style="text-align: right;">
+                        父级：
+                    </td>
+                    <td>
+                        <select id="cc" class="easyui-combotree" name="FID" style="width: 175px;" data-options="url:'/ProjectMenu/LoadTree?combo=combo'"></select><span style="color: #ff0000">*</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: right;">
+                        分类名称：
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="Node" id="Node" style="width: 175px; " type="text" /><span style="color: #ff0000">*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;">
+                        链接：
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="Link" id="Link" style="width: 175px; " type="text" /><span style="color: #ff0000">*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right;">
+                        排序：
+                    </td>
+                    <td><input class="easyui-textbox" name="Sort" id="Sort" style="width: 175px; " type="text" /><span style="color: #ff0000">*</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="width: 97.5%; text-align: center; position: absolute; bottom: 5px; right: 5px; padding-top: 5px; padding-bottom: 10px; background-color: #D4D4D4; height: 20px; ">
+            <a id="btnOk" href="javascript:void(0)" onclick="SubmitForm()" class="easyui-linkbutton" data-options="iconCls:'icon-image_Save'">确认</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-image_CloseBuse'">取消</a>
+        </div>
+    </form>
+</div>
+@*<img src='http://10.0.0.252:810/data/productwaterImg/201308/watermark_img/2013814103527484285548.jpg' />*@
+
+
+
+@*<div style="margin:s0px 0;"></div>
+    <div style="padding:10px 200px">http://10.0.0.252:810/data/productwaterImg/201308/watermark_img/2013814103527484285548.jpg
+        <a id="pp1" style="width:100px;padding:5px">Hover Me</a>
+    </div>
+    <div style="padding:10px 200px">
+        <div id="pp2" class="easyui-panel" style="width:100px;padding:5px">Hover Me</div>
+    </div>*@
+
+
+
+
+

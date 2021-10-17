@@ -1,0 +1,194 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BillHdr.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>供应商</title>
+    <script src="/Content/SWFupload/swfupload.js"></script>
+    <script src="/Content/SWFupload/handlers.js"></script>
+    <style type="text/css">
+        #Image_Left {
+            width: 540px;
+            float: left;
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 420px;
+            overflow: scroll;
+        }
+
+        #Image_Right {
+            width: 420px;
+            float: left;
+            height: 420px;
+            border-left: 2px dashed #95B8E7;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).bind("contextmenu", function (e) {
+                return false;
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            initDataGrid();
+        });
+        var isFist = false;
+        var rowID = 0;
+        function initDataGrid() {
+            $('#tt').datagrid({
+                url: '/Supplier/LoadData',
+                remoteSort: false,
+                height: 280,
+                fit: true,
+                pagination: true,
+                nowrap: false,
+                fitColumns: true,
+                pageList: [10, 30, 50],
+                singleSelect: false,
+                rownumbers: true,
+                queryParams: {},
+                columns: [[
+						{ field: 'ck', checkbox: true, align: 'center', width: 50 },
+						{ field: 'ID', title: '编码', width: 30, align: 'center' },
+						{ field: 'Company', title: '公司名称', width: 80, align: 'center', editor: 'text' },
+                        {
+                            field: 'Url', title: '产品链接', width: 200, align: 'center', editor: 'text',
+                            formatter: function (value, row, index) {
+                                if (value.length < 1) {
+                                    return "";
+                                }
+                                return "<a target='_blank' href='" + value + "'>" + value + "</a>";
+                            }
+                        },
+                        {
+                            field: 'CreateTime', title: '创建时间', width: 130, align: 'center',
+                            formatter: function (value, row, index) {
+                                return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-MM-dd hh:mm");
+                            }
+                        },
+        { field: 'Phone', title: '备注', width: 80, align: 'center', editor: 'text' },
+        { field: 'Remark', title: '标题', width: 280, align: 'center', editor: 'text' }
+                ]],
+                toolbar: [{
+                    id: 'btnDownShelf',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: dgAction.append
+                }, {
+                    id: 'btnDownShelf',
+                    text: '编辑',
+                    iconCls: 'icon-edit',
+                    handler: dgAction.edit
+                }, {
+                    id: 'btnDownShelf',
+                    text: '保存',
+                    iconCls: 'icon-save',
+                    handler: dgAction.save
+                }, {
+                    id: 'btnDownShelf',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: dgAction.remove
+                }, {
+                    id: 'btnDownShelf',
+                    text: '撤消',
+                    iconCls: 'icon-undo',
+                    handler: dgAction.reject
+                }, {
+                    id: 'btnDownShelf',
+                    text: '一键生成商品',
+                    iconCls: 'icon-undo',
+                    handler: dgAction.createProduct
+                }], onAfterEdit: function (rowIndex, rowData, changes) {
+                    if (JSON.stringify(changes).length < 3) { return; }//{ row: JSON.stringify(rowData) }
+                    $.post("/Supplier/Save", rowData, function (data) {
+                        if (data == "Error") {
+                            $.messager.alert("消息", "保存失败，请联系管理员。");
+                        } else if (data == "Repeat") {
+                            $.messager.alert("消息", "已存在重复产品数据");
+                        }
+                    });
+                }
+            });
+        }
+
+
+        var editIndex = undefined;
+        function endEditing() {
+            if (editIndex == undefined) {
+                return true;
+            }
+            return false;
+        }
+        var dgAction = {
+            append: function () {
+                if (endEditing()) {
+                    $('#tt').datagrid('appendRow', { ID: '0', Company: '', Url: '', CreateTime: '/Date(1425145605807)/', Phone: "", Remark: "" });
+                    editIndex = $('#tt').datagrid('getRows').length - 1;
+                    $('#tt').datagrid('selectRow', editIndex)
+                           .datagrid('beginEdit', editIndex);
+                }
+            }, save: function () {
+                $('#tt').datagrid('acceptChanges');
+                editIndex = undefined;
+            }, edit: function () {
+                var index = $('#tt').datagrid('getRowIndex', $('#tt').datagrid('getSelected'));
+                $('#tt').datagrid('beginEdit', index);
+                editIndex = index;
+            }, reject: function () {
+                $('#tt').datagrid('rejectChanges', editIndex);
+                editIndex = undefined;
+            }, remove: function () {
+                var row = $('#tt').datagrid('getSelected');
+                var index = $('#tt').datagrid('getRowIndex', row);
+                if (index < 0) { return; }
+                $.messager.confirm("消息", "是否需要删除！", function (b) {
+                    if (b) { 
+                        $.get("/Supplier/Delete", "ids=" + row.ID, function (data) {
+                            if (data == "Ok") {
+                                $.messager.alert("消息", "删除完成！");
+                                //initDataGrid(); 
+                                $('#tt').datagrid('deleteRow', index);
+                                editIndex = undefined;
+                            } else {
+                                $.messager.alert("消息", "删除失败！");
+                            }
+                        });
+                    }
+                });
+
+            }, createProduct: function () {
+                //"skuMap".+?}}
+                var rows = $("#tt").datagrid('getChecked');
+                if (rows.length > 0) {
+                    var ids = '';
+                    for (var i = 0; i < rows.length; i++) {
+                        var row = rows[i];
+                        ids += row.ID + ',';
+                    }
+                    $.get("/Supplier/CreateProduct", { "ids": ids }, function (data) {
+                        if (data == "Ok") {
+                            $.messager.alert("消息", "数据处理完成！请去产品表查看生成的产品。");
+                            return;
+                        }
+                        $.messager.alert("消息", "生成失败，请稍后再试.");
+                        return;
+                    });
+                    return;
+                }
+                $.messager.alert("消息", "请选择需要生成的数据");
+            }
+        }
+    </script>
+</head>
+<body>
+    <table id="tt"></table>
+</body>
+</html>

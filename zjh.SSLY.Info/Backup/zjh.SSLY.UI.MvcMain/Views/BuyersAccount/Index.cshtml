@@ -1,0 +1,329 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>买家账户</title>
+    <link href="/jquery-easyui-1.4/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/jquery-easyui-1.4/themes/icon.css" rel="stylesheet" />
+    <script src="/Scripts/jquery-1.8.2.js"></script>
+    <script src="/jquery-easyui-1.4/jquery.easyui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            initDataGrid();
+        });
+        function initDataGrid() {
+            $('#tt').datagrid({
+                url: '/BuyersAccount/LoadBuyers',
+                height: 600,
+                fitColumns: true,
+                idField: 'ID',
+                loadMsg: '正在加载用户的信息...',
+                pagination: true,
+                singleSelect: false,
+                pageSize: 30,
+                pageNumber: 1,
+                pageList: [10, 20, 30],
+                queryParams: {},
+                columns: [[//ID RName  DelFlag Remark RoleType
+						{ field: 'ck', checkbox: true, align: 'center', width: 50 },
+						{ field: 'ID', title: 'ID', width: 50, align: 'center' },
+						{ field: 'TbAccount', title: '淘宝账户', width: 80, align: 'center' },
+                        { field: 'TbPassword', title: '淘宝密码', width: 80, align: 'center' },
+                        { field: 'ZfbAccount', title: '支付宝账户', width: 100, align: 'center' },
+                        { field: 'ZfbPassword', title: '支付宝密码', width: 80, align: 'center' },
+                        { field: 'Email', title: '邮箱', width: 100, align: 'center' },
+                        { field: 'Phone', title: '电话', width: 80, align: 'center' },
+                        {
+                            field: 'Credit', title: '信用', width: 80, align: 'center',
+                            formatter: function (value, row, index) {
+                                if (value < 4) {
+                                    return value;
+                                }
+                                if (value > 3 && value < 11) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/b_red_1.gif" /></a>';
+                                }
+                                else if (value > 10 && value < 41) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/></a>';
+                                }
+                                else if (value > 40 && value < 91) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/></a>';
+                                }
+                                else if (value > 90 && value < 151) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/></a>';
+                                }
+                                else if (value > 150 && value < 251) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/><img src="/Images/b_red_1.gif"/></a>';
+                                } else if (value > 250 && value < 501) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/zs.gif" /></a>';
+                                }
+                                else if (value > 500 && value < 1001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /></a>';
+                                }
+                                else if (value > 1000 && value < 2001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /></a>';
+                                }
+                                else if (value > 2000 && value < 5001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /></a>';
+                                }
+                                else if (value > 5000 && value < 10001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /><img src="/Images/zs.gif" /></a>';
+                                }
+                                else if (value > 10000 && value < 20001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/gg.gif" /></a>';
+                                }
+                                else if (value > 20000 && value < 50001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /></a>';
+                                }
+                                else if (value > 50000 && value < 100001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /></a>';
+                                }
+                                else if (value > 100000 && value < 200001) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /></a>';
+                                }
+                                else if (value > 200000 && value < 50000) {
+                                    return '<a href=javascript:(0) title="' + value + '"><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /><img src="/Images/gg.gif" /></a>';
+                                }
+                            }
+                        },
+                        { field: 'AccountTime', title: '创建时间', width: 80, align: 'center' },
+				        { field: 'Remark', title: '备注', width: 140, align: 'center' },
+						{
+						    field: 'State', title: '状态', width: 80, align: 'center',
+						    formatter: function (value, row, index) {
+						        if (value == 1) {
+						            return "冻结";
+						        } else {
+						            return "正常";
+						        }
+						    }
+						}
+                ]],
+                toolbar: [{
+                    id: 'btnDownShelf',
+                    text: '添加账户',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        $('#btnOk').unbind("click");
+                        $('#btnCancel').unbind("click");
+                        var fields = $("#divAccount").find("[field]");
+                        for (var i = 0; i < fields.length; i++) {
+                            $(fields[i]).val("");
+                        }
+                        $("#divAccount").css("display", "block");
+                        $("#divAccount").dialog({
+                            width: 500,
+                            height: 450,
+                            title: "添加买家帐号"
+                        });
+                        $("#btnOk").click(function () {
+                            BtnExecute("btnOk");
+                        });
+
+                    }
+                }, {
+                    id: 'btnUpdate',
+                    text: '修改账户',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        $('#btnOk').unbind("click");
+                        $('#btnCancel').unbind("click");
+                        $("#divAccount").css("display", "block");
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (rows.length == 0) {
+                            alert("请选择要编辑的账户");
+                            return;
+                        }
+                        if (rows.length > 1) {
+                            alert("只能对一个账户编辑");
+                            return;
+                        }
+                        $("#divAccount").dialog({
+                            width: 500,
+                            height: 450,
+                            title: "编辑"
+                        });
+                        $.get("/BuyersAccount/GetList", "ID=" + rows[0].ID, function (data) {
+                            var result = JSON.parse(data).rows[0];
+                            var fields = $("#divAccount").find("[field]");
+                            for (var i = 0; i < fields.length; i++) {
+                                var $inputs = $(fields[i]);
+                                switch ($inputs.attr("field")) {
+                                    case "TbAccount":
+                                        $inputs.val(result.TbAccount);
+                                        break
+                                    case "TbPassword":
+                                        $inputs.val(result.TbPassword);
+                                        break;
+                                    case "ZfbAccount":
+                                        $inputs.val(result.ZfbAccount);
+                                        break;
+                                    case "ZfbPassword":
+                                        $inputs.val(result.ZfbPassword);
+                                        break;
+                                    case "Email":
+                                        $inputs.val(result.Email);
+                                        break;
+                                    case "Phone":
+                                        $inputs.val(result.Phone);
+                                        break;
+                                    case "Credit":
+                                        $inputs.val(result.Credit);
+                                        break;
+                                    case "CreateTime":
+                                        $inputs.val(result.CreateTime);
+                                        break;
+                                    case "State":
+                                        $inputs.val(result.State);
+                                        break
+                                    case "Remark":
+                                        $inputs.val(result.Remark);
+                                        break;
+                                }
+                            }
+                        });
+
+                        $("#btnOk").click(function () {
+                            BtnExit("btnOk", rows[0].ID);
+                        });
+
+                    }
+                }// {
+                 //  id: 'btnDelete',
+                 //  text: '删除',
+                 //  iconCls: 'icon-remove',
+                 //  handler: function () {
+                 //      var rows = $('#tt').datagrid('getSelections');
+                 //      var ids = "";
+                 //      for (var i = 0; i < rows.length; i++) {
+                 //          ids += rows[i].ID + ",";
+                 //      }
+                 //      $.get("/BuyersAccount/Delete", "ids=" + ids, function (data) {
+                 //          alert("删除完成！");
+                 //          initDataGrid();
+                 //      })
+                 //  }
+                //}
+                ],
+                onHeaderContextMenu: function (e, field) {
+                }
+            });
+        }
+
+
+        function BtnExecute(type) {
+            if (type == "btnOk") {
+                var param = {};
+                var fields = $("#divAccount").find("[field]");
+                for (var i = 0; i < fields.length; i++) {
+                    var $inputs = $(fields[i]);
+                    param[$inputs.attr("field")] = $inputs.val();
+                }
+
+                $.get("/BuyersAccount/Add", param, function (data) {
+                    if (data == "Ok") {
+                        alert("添加成功！");
+                        $("#divAccount").dialog("close");
+                        initDataGrid();
+                    } else {
+                        $.alert("添加失败！");
+                    }
+                });
+            } else {
+                //关闭当前窗口
+            }
+        }
+
+        function BtnExit(type, ID) {
+            if (type == "btnOk") {
+                var param = {};
+                var fields = $("#divAccount").find("[field]");
+                for (var i = 0; i < fields.length; i++) {
+                    var $inputs = $(fields[i]);
+                    param[$inputs.attr("field")] = $inputs.val();
+                }
+                param["ID"] = ID;
+                $.get("/BuyersAccount/Exit", param, function (data) {
+                    if (data == "Ok") {
+                        alert("更新成功！");
+                        $("#divAccount").dialog("close");
+                        initDataGrid();
+                    } else {
+                        alert("更新失败！");
+                    }
+                });
+            } else {
+                //关闭当前窗口
+            }
+
+        }
+
+
+    </script>
+</head>
+<body>
+    <div>
+        <table id="tt" style=" iconcls=" icon-edit"></table>
+    </div>
+    <div id="divAccount" style="display:none">
+        <table>
+            <tr>
+
+                <td>淘宝账号</td>
+                <td><input type="text" name="name" field="TbAccount" value="" /></td>
+                <td>淘宝密码</td>
+                <td><input type="text" name="name" field="TbPassword" value="" /></td>
+            </tr>
+            <tr>
+                <td>支付宝账号</td>
+                <td><input type="text" name="name" field="ZfbAccount" value="" /></td>
+                <td>支付宝密码</td>
+                <td><input type="text" name="name" field="ZfbPassword" value="" /></td>
+            </tr>
+            <tr>
+                <td>邮箱</td>
+                <td><input type="text" name="name" field="Email" value="" /></td>
+                <td>电话</td>
+                <td><input type="text" name="name" field="Phone" value="" /></td>
+            </tr>
+            <tr>
+                <td>信用</td>
+                <td><input type="text" name="name" field="Credit" value="" /></td>
+                <td>创建时间</td>
+                <td><input type="text" name="name" field="CreateTime" value="" /></td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td colspan="3">
+                    <select field="State">
+                        <option value="0">正常</option>
+                        <option value="1">冻结</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">备注</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <textarea field="Remark" style="width:470px;height:200px;" name="codemirror" class="easyui-codemirror" data-options="required: true, height: 140, value: 'codemirror1'"></textarea>
+
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <input type="button" name="name" id="btnCancel" style="float:right;" value="取消" />
+                    <input type="button" name="name" id="btnOk" style="float:right;" value="确认" />
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\obj\Debug\zjh.SSLY.TaoBao.csprojResolveAssemblyReference.cache
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\bin\Debug\zjh.SSLY.TaoBao.dll
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\bin\Debug\zjh.SSLY.TaoBao.pdb
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\bin\Debug\TopSdk.dll
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\bin\Debug\TopSdk.pdb
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\obj\Debug\zjh.SSLY.TaoBao.dll
+D:\开发项目\zjh.SSLY.Info\zjh.SSLY.TaoBao\obj\Debug\zjh.SSLY.TaoBao.pdb
+D:\开发项目\zjh.SSLY.Info\Library\zjh.SSLY.TaoBao.dll
+D:\开发项目\zjh.SSLY.Info\Library\zjh.SSLY.TaoBao.pdb
